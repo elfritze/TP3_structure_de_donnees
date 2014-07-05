@@ -220,7 +220,6 @@ namespace TP3
 		void detruireGraphe();
 
 		//Vous pouvez ajoutez d'autres méthodes publiques si vous sentez leur nécessité
-
         
 	private:
 		class Sommet;		// Un sommet du graphe, on le déclare ici à cause de la classe Arc qui s'en sert

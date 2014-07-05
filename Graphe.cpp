@@ -156,18 +156,18 @@ namespace TP3
 		}
         
        /**
-       * \brief Retourne le nombre de sommets dans la liste des sommets
-	   * \post Le graphe reste inchangé.
-       */
+		 * \fn int Graphe::nombreSommets() const
+		 *
+		 */ 
         int Graphe::nombreSommets() const
 		{
 			return nbSommets;
 		}
         
        /**
-       * \brief Indique si la liste des sommets est vide
-	   * \post Le graphe reste inchangé
-       */
+		 * \fn bool Graphe::estVide() const
+		 *
+		 */ 
         bool Graphe::estVide() const
 		{
 			return nbSommets==0;
@@ -187,9 +187,10 @@ namespace TP3
 				//On parcoure la liste des sommets jusqu'à ce que l'on trouve le bon.
 				while(courant->suivant != 0)
 				{
+					courant = courant->suivant;
 					if(courant->nom == nom)
 						return true;
-					courant = courant->suivant;
+					
 				}
 			}
 			return false;
@@ -234,9 +235,10 @@ namespace TP3
 				//On parcoure la liste des sommets jusqu'à ce que l'on trouve le bon.
 				while(courant->suivant != 0)
 				{
+					courant = courant->suivant;
 					if(courant->coord.lg == lg && courant->coord.lt == lt)
 						return courant->nom;
-					courant = courant->suivant;
+					
 				}
 			}
 
@@ -265,9 +267,9 @@ namespace TP3
 			//On parcoure la liste des sommets jusqu'à ce que l'on trouve le bon.
 			while(courant->suivant != 0)
 			{
-				if(courant->nom == nom)
-					return courant->coord;
 				courant = courant->suivant;
+				if(courant->nom == nom)
+					return courant->coord;			
 			}	
 		}
 
@@ -280,7 +282,9 @@ namespace TP3
 		 */
 		float Graphe::getDistance(const std::string& sommetUn, const std::string& sommetDeux) const
 		{
-			return 0.;
+			Coordonnees coordUn = getCoordonnesSommet(sommetUn);
+			Coordonnees coordDeux = getCoordonnesSommet(sommetDeux);
+			return sqrt(pow((coordUn.lt-coordDeux.lt),2) + pow((coordUn.lg-coordDeux.lg),2));
 		}
 
        /**
