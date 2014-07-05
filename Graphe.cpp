@@ -219,26 +219,56 @@ namespace TP3
 		}
 
        /**
-       * \brief Retourne le nom d'un sommet selon ses coordonnées
-       * \pre Le sommet doit faire partie du graphe
-	   * \post Le graphe reste inchangé.
-       * \exception logic_error Le sommet n'existe pas
-       */
+		 * \fn std::string Graphe::getNomSommet(float lt, float lg) const
+		 *
+		 * \param[in] lt : Latitude
+		 * \param[in] lg : Longitude
+		 */
         std::string Graphe::getNomSommet(float lt, float lg) const
 		{
-			return "";
+			
+			if(listeSommets != 0)
+			{
+				Sommet * courant = 0;
+				courant = listeSommets;
+				//On parcoure la liste des sommets jusqu'à ce que l'on trouve le bon.
+				while(courant->suivant != 0)
+				{
+					if(courant->coord.lg == lg && courant->coord.lt == lt)
+						return courant->nom;
+					courant = courant->suivant;
+				}
+			}
+
+			//Exception si le sommet m'existe pas
+			throw std::logic_error("getNomSommet: Le sommet n'existe pas.");
 		}
         
-       /**
-       * \brief Retourne les coordonnées d'un sommet
-       * \pre Le sommet doit exister
-	   * \post Le graphe reste inchangé.
-       * \exception logic_error Il n'y a pas de sommets dans le graphe
-       * \exception logic_error Le sommet n'existe pas
-       */
+		/**
+		 * \fn Coordonnees Graphe::getCoordonnesSommet(const std::string& nom) const
+		 *
+		 * \param[in] nom : Nom du sommet
+		 */
         Coordonnees Graphe::getCoordonnesSommet(const std::string& nom) const
 		{
-			return Coordonnees();
+			//Exception si aucun sommet
+			if(nbSommets == 0)
+				throw std::logic_error("getCoordonnesSommet:  Il n'y a pas de sommets dans le graphe");
+
+			//Exception si le sommet m'existe pas
+			if(!sommetExiste(nom))
+				throw std::logic_error("getNomSommet: Le sommet n'existe pas.");
+
+
+			Sommet * courant = 0;
+			courant = listeSommets;
+			//On parcoure la liste des sommets jusqu'à ce que l'on trouve le bon.
+			while(courant->suivant != 0)
+			{
+				if(courant->nom == nom)
+					return courant->coord;
+				courant = courant->suivant;
+			}	
 		}
 
 		/**

@@ -26,7 +26,7 @@ int main()
 	graph.ajouterSommet("Montreal",45.51,-73.55);
 	graph.ajouterSommet("Ottawa",45.41,-75.70);
 	cout<<graph.sommetExiste("Quebec");
-	cout<<graph;
+	cout<<graph.getCoordonnesSommet("Quebec").lg<<" , "<<graph.getCoordonnesSommet("Quebec").lt;
 	cin>>comm;
     return 0;
 }
