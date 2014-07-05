@@ -140,6 +140,13 @@ namespace TP3
         std::vector<std::string> Graphe::listerNomsSommets() const
 		{
 			std::vector<std::string> retour;
+			Sommet * courant = 0;
+			courant = listeSommets;
+			while(courant != 0)
+			{
+				retour.push_back(courant->nom);
+				courant = courant->suivant;
+			}
 			return retour;
 		}
 		
