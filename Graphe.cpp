@@ -19,7 +19,6 @@ namespace TP3
 		Graphe::Graphe(){
 			nbSommets = 0;
 			nbArcs = 0;
-			listeSommets = new Sommet;
 			listeSommets = 0;
 		}
 
@@ -31,7 +30,7 @@ namespace TP3
        */
         Graphe::~Graphe()
 		{
-
+			//detruireGraphe();
 		}
             
       /**
@@ -56,15 +55,43 @@ namespace TP3
 		}
 
        /**
-       * \brief Ajout d'un sommet au graphe
-	   * \pre Il doit y avoir assez de mémoire.
-       * \pre Le sommet ne doit pas déjà exister
-       * \post Un sommet content les informations passées en argument a été ajouté au Graphe
-       * \exception bad_alloc Pas assez de mémoire pour alloué le nouveau sommet
-       * \exception logic_error Le sommet existe déjà
-       */       
+		 * \fn bool Graphe::ajouterSommet(const std::string& nom) const
+		 *
+		 * \param[in] nom : Le nom du sommet
+		 * \param[in] lt : Latitude
+		 * \param[in] lg : Longitude
+		 */      
         void Graphe::ajouterSommet(const std::string& nom, float lt, float lg)
 		{
+			//Exception si le sommet existe
+			if(sommetExiste(nom))
+				throw std::logic_error("ajouterSommet: Le sommet existe déjà");
+
+			//On crée la coordonnée et le sommet
+			Coordonnees coord = Coordonnees();
+			coord.lg = lg;
+			coord.lt = lt;
+			Sommet * ajout = new Sommet(nom, coord);
+			
+			//Si la liste est vide
+			if(listeSommets == 0)
+			{
+				listeSommets = ajout;
+				nbSommets++;
+			}
+			else
+			{
+				//Sinon on ajoute à la fin
+				Sommet * courant = 0;
+				courant = listeSommets;
+				while(courant->suivant != 0)
+				{
+					courant = courant->suivant;
+				}
+				courant->suivant = ajout;
+				nbSommets++;
+			}
+
 
 
 		}
@@ -134,7 +161,7 @@ namespace TP3
        */
         int Graphe::nombreSommets() const
 		{
-			return 0;
+			return nbSommets;
 		}
         
        /**
@@ -143,15 +170,28 @@ namespace TP3
        */
         bool Graphe::estVide() const
 		{
-			return true;
+			return nbSommets==0;
 		}
         
        /**
-       * \brief Retourne l'existence d'un sommet
-	   * \post Le graphe reste inchangé.
-       */
+		 * \fn bool Graphe::sommetExiste(const std::string& nom) const
+		 *
+		 * \param[in] nom : Le nom du sommet
+		 */
         bool Graphe::sommetExiste(const std::string& nom) const
 		{
+			if(listeSommets != 0)
+			{
+				Sommet * courant = 0;
+				courant = listeSommets;
+				//On parcoure la liste des sommets jusqu'à ce que l'on trouve le bon.
+				while(courant->suivant != 0)
+				{
+					if(courant->nom == nom)
+						return true;
+					courant = courant->suivant;
+				}
+			}
 			return false;
 		}
         

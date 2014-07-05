@@ -231,6 +231,7 @@ namespace TP3
 			Sommet * dest;			// Un pointeur sur la ville de destination
 			Ponderations ponder;	// Les pondérations utilisées pour un trajet entre deux villes	
 			Arc *  suivDest;		// La prochaine ville de destination
+
 		};
 		
 		class Sommet		// Description d'un sommet
@@ -242,6 +243,9 @@ namespace TP3
 			bool etat;			    // Pour marquer une ville
 			Sommet *precedent;		// La ville précédente dans la liste des villes
 			Sommet *suivant;		// La prochaine ville dans la liste
+
+			explicit Sommet(std::string nom,Coordonnees coord,Arc* listeDest = 0,bool etat = false,Sommet *precedent = 0,Sommet *suivant = 0) :
+                           nom(nom),coord(coord),listeDest(listeDest),etat(etat),precedent(precedent),suivant(suivant){}
 		};
 
 		int nbSommets;					// Le nombre de sommets dans le graphe

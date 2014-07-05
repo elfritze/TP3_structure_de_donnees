@@ -19,6 +19,14 @@ using namespace TP3;
 int main()
 {
 	// Faire vos tests ici.
+	string comm;
 	Graphe graph = Graphe();
+	cout<<graph.sommetExiste("Quebec");
+	graph.ajouterSommet("Quebec",46.80,-71.24);
+	graph.ajouterSommet("Montreal",45.51,-73.55);
+	graph.ajouterSommet("Ottawa",45.41,-75.70);
+	cout<<graph.sommetExiste("Quebec");
+	cout<<graph;
+	cin>>comm;
     return 0;
 }
