@@ -11,13 +11,14 @@
 #include <fstream>
 //vous pouvez inclure d'autres librairies si c'est nécessaire
 using namespace std;
-using namespace TP3;
-
 #include "ReseauAerien.h"
+#include "Graphe.h"
+
+using namespace TP3;
 
 int main()
 {
 	// Faire vos tests ici.
-
+	Graphe graph = Graphe();
     return 0;
 }
