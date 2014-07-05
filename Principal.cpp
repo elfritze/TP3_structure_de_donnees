@@ -26,7 +26,7 @@ int main()
 	graph.ajouterSommet("Montreal",45.51,-73.55);
 	graph.ajouterSommet("Ottawa",45.41,-75.70);
 	cout<<graph.sommetExiste("Quebec");
-	cout<<"\n"<<graph.getDistance("Ottawa","Montreal");
+	cout<<"\n"<<graph.getDistance("Montreal","Ottawa");
 	cin>>comm;
     return 0;
 }

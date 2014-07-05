@@ -185,11 +185,12 @@ namespace TP3
 				Sommet * courant = 0;
 				courant = listeSommets;
 				//On parcoure la liste des sommets jusqu'à ce que l'on trouve le bon.
-				while(courant->suivant != 0)
+				while(courant != 0)
 				{
-					courant = courant->suivant;
+					
 					if(courant->nom == nom)
 						return true;
+					courant = courant->suivant;
 					
 				}
 			}
@@ -233,11 +234,11 @@ namespace TP3
 				Sommet * courant = 0;
 				courant = listeSommets;
 				//On parcoure la liste des sommets jusqu'à ce que l'on trouve le bon.
-				while(courant->suivant != 0)
+				while(courant != 0)
 				{
-					courant = courant->suivant;
 					if(courant->coord.lg == lg && courant->coord.lt == lt)
 						return courant->nom;
+					courant = courant->suivant;
 					
 				}
 			}
@@ -265,11 +266,11 @@ namespace TP3
 			Sommet * courant = 0;
 			courant = listeSommets;
 			//On parcoure la liste des sommets jusqu'à ce que l'on trouve le bon.
-			while(courant->suivant != 0)
+			while(courant != 0)
 			{
-				courant = courant->suivant;
 				if(courant->nom == nom)
-					return courant->coord;			
+					return courant->coord;
+				courant = courant->suivant;
 			}	
 		}
 
