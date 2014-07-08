@@ -95,9 +95,9 @@ std::ostream& operator<<(std::ostream& out, const Graphe& g)
 /**
  * \fn bool Graphe::ajouterSommet(const std::string& nom) const
  *
- * \param[in] nom : Le nom du sommet
- * \param[in] lt : Latitude
- * \param[in] lg : Longitude
+ * \param[in] nom : Le nom du sommet.
+ * \param[in] lt : La latitude en décimale.
+ * \param[in] lg : La longitude en décimale.
  */
 void Graphe::ajouterSommet(const std::string& nom, float lt, float lg)
 {
