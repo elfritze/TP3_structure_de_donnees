@@ -101,12 +101,12 @@ std::ostream& operator<<(std::ostream& out, const Graphe& g)
  */
 void Graphe::ajouterSommet(const std::string& nom, float lt, float lg)
 {
-   //Exception si le sommet existe
+   //Exception si le sommet existe déjà
    if (sommetExiste(nom))
       throw std::logic_error("ajouterSommet: Le sommet existe déjà");
 
    //On crée la coordonnée et le sommet
-   Coordonnees coord = Coordonnees();
+   Coordonnees coord;
    coord.lg = lg;
    coord.lt = lt;
    Sommet * ajout = new Sommet(nom, coord);
@@ -185,6 +185,7 @@ void Graphe::enleverArc(const std::string& nom1, const std::string& nom2)
 std::vector<std::string> Graphe::listerNomsSommets() const
 {
    std::vector<std::string> retour;
+
    Sommet * courant = 0;
    courant = listeSommets;
    while (courant != 0)
@@ -192,6 +193,7 @@ std::vector<std::string> Graphe::listerNomsSommets() const
       retour.push_back(courant->nom);
       courant = courant->suivant;
    }
+
    return retour;
 }
 
@@ -247,16 +249,16 @@ bool Graphe::sommetExiste(const std::string& nom) const
    {
       Sommet * courant = 0;
       courant = listeSommets;
-      //On parcoure la liste des sommets jusqu'à ce que l'on trouve le bon.
+
+      // On parcourt la liste des sommets jusqu'à ce que l'on trouve le bon.
       while (courant != 0)
       {
-
          if (courant->nom == nom)
             return true;
          courant = courant->suivant;
-
       }
    }
+
    return false;
 }
 
@@ -307,19 +309,17 @@ Ponderations Graphe::getPonderationsArc(const std::string& sommetUn, const std::
  */
 std::string Graphe::getNomSommet(float lt, float lg) const
 {
-   //précondition : Le sommet doit faire partie du graphe.
-
    if (listeSommets != 0)
    {
       Sommet * courant = 0;
       courant = listeSommets;
-      //On parcoure la liste des sommets jusqu'à ce que l'on trouve le bon.
+
+      //On parcourt la liste des sommets jusqu'à ce que l'on trouve le bon.
       while (courant != 0)
       {
-         if (courant->coord.lg == lg && courant->coord.lt == lt)
+         if (courant->coord.lt == lt && courant->coord.lg == lg)
             return courant->nom;
          courant = courant->suivant;
-
       }
    }
 
@@ -338,21 +338,29 @@ Coordonnees Graphe::getCoordonnesSommet(const std::string& nom) const
 {
    //Exception si aucun sommet
    if (nbSommets == 0)
-      throw std::logic_error("getCoordonnesSommet:  Il n'y a pas de sommets dans le graphe");
+      throw std::logic_error("getCoordonnesSommet: Il n'y a pas de sommet dans le graphe.");
 
-   //Exception si le sommet m'existe pas
+   //Exception si le sommet n'existe pas
    if (!sommetExiste(nom))
-      throw std::logic_error("getNomSommet: Le sommet n'existe pas.");
+      throw std::logic_error("getCoordonnesSommet: Le sommet n'existe pas.");
 
+
+   Coordonnees coordonnesSommet;
    Sommet * courant = 0;
    courant = listeSommets;
-   //On parcoure la liste des sommets jusqu'à ce que l'on trouve le bon.
+
+   //On parcourt la liste des sommets jusqu'à ce que l'on trouve le bon.
    while (courant != 0)
    {
       if (courant->nom == nom)
-         return courant->coord;
+      {
+         coordonnesSommet = courant->coord;
+         break;
+      }
       courant = courant->suivant;
    }
+
+   return coordonnesSommet;
 }
 
 /**
@@ -365,13 +373,13 @@ Coordonnees Graphe::getCoordonnesSommet(const std::string& nom) const
  */
 float Graphe::getDistance(const std::string& sommetUn, const std::string& sommetDeux) const
 {
-   //précondition : les sommets doivent exister.
-
-   //exception : logic_error si un des sommets n'existe pas.
-
+   //Exception si un des sommets n'existe pas.
+   if (!sommetExiste(sommetUn) || !sommetExiste(sommetDeux))
+      throw std::logic_error("getDistance: Un des sommets n'existe pas.");
 
    Coordonnees coordUn = getCoordonnesSommet(sommetUn);
    Coordonnees coordDeux = getCoordonnesSommet(sommetDeux);
+
    return sqrt(pow((coordUn.lt - coordDeux.lt), 2) + pow((coordUn.lg - coordDeux.lg), 2));
 }
 

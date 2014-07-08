@@ -289,7 +289,7 @@ private:
        *
        * \post Un noeud typique Sommet est initialisé.
        */
-      explicit Sommet(std::string nom, Coordonnees coord, Arc* listeDest = 0, bool etat = false,
+      explicit Sommet(std::string nom, Coordonnees coord, Arc * listeDest = 0, bool etat = false,
                       Sommet *precedent = 0, Sommet *suivant = 0) :
                       nom(nom), coord(coord), listeDest(listeDest), etat(etat),
                       precedent(precedent), suivant(suivant) {}
