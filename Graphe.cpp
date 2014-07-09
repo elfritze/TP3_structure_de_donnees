@@ -144,10 +144,70 @@ void Graphe::ajouterSommet(const std::string& nom, float lt, float lg)
 void Graphe::ajouterArc(const std::string& nom1, const std::string& nom2,
                         float duree, float cout, int ns)
 {
-   //précondition : Les deux sommets doivent exister
+   bool existeSommetUn = false;
+   bool existeSommetDeux = false;
+   Sommet * sommetUn = 0;
+   Sommet * sommetDeux = 0;
+   Sommet * sommetCourant = listeSommets;
 
-   //exception : logic_error si un des deux sommets n'existe pas
-   //exception : logic_error s'il y a déjà un arc orienté entre ces deux sommets
+   // On parcourt la liste des sommets pour trouver les deux sommets
+   for (int i = 0; i < nbSommets; i++)
+   {
+      if (sommetCourant->nom == nom1)
+      {
+         sommetUn = sommetCourant;
+         existeSommetUn = true;
+      }
+
+      if (sommetCourant->nom == nom2)
+      {
+         sommetDeux = sommetCourant;
+         existeSommetDeux = true;
+      }
+
+      sommetCourant = sommetCourant->suivant;
+   }
+
+   // Exception si un des deux sommets n'existe pas
+   if (!existeSommetUn || !existeSommetDeux)
+      throw std::logic_error("ajouterArc: Un des deux sommets n'existe pas.");
+
+   // Exception s'il y a déjà un arc orienté entre ces deux sommets
+   if (arcExiste(nom1, nom2))
+      throw std::logic_error("ajouterArc: Un arc existe déjà entre ces deux sommets.");
+
+
+   // Pondérations de l'arc
+   Ponderations newPonder;
+   newPonder.duree = duree;
+   newPonder.cout = cout;
+   newPonder.ns = ns;
+
+   // On crée l'arc à ajouter
+   Arc * ajout = new Arc;
+   ajout->dest = sommetDeux;
+   ajout->ponder = newPonder;
+   ajout->suivDest = 0;
+
+
+   // On fait l'ajout dans listeDest
+   Arc* courant(sommetUn->listeDest); // pointeur de service
+
+   if (courant == 0)    // Si listeDest de sommetUn est vide
+   {
+      sommetUn->listeDest = ajout;
+      nbArcs++;
+   }
+   else
+   {
+      while (courant->suivDest != 0)
+      {
+         courant = courant->suivDest;
+      }
+
+      courant->suivDest = ajout;
+      nbArcs++;
+   }
 }
 
 /**
@@ -272,9 +332,30 @@ bool Graphe::sommetExiste(const std::string& nom) const
  */
 bool Graphe::arcExiste(const std::string& sommetUn, const std::string& sommetDeux) const
 {
-   //précondition : Les sommets doivent appartenir au graphe.
+   // Exception si l'un ou l'autre, ou les 2 sommets ne font pas partie du graphe
+   if (!sommetExiste(sommetUn) || !sommetExiste(sommetDeux))
+      throw std::logic_error("arcExiste: Un des sommets n'existe pas.");
 
-   //exception : logic_error si l'un ou l'autre, ou les 2 sommets ne font pas partie du graphe
+
+   // On parcourt la liste des sommets pour trouver le sommetUn
+   Sommet * sommetCourant = listeSommets;
+   for (int i = 0; i < nbSommets; i++)
+   {
+      if (sommetCourant->nom == sommetUn)
+         break;
+
+      sommetCourant = sommetCourant->suivant;
+   }
+
+   // On parcourt la liste des arcs du sommetUn
+   Arc * courant(sommetCourant->listeDest);
+   while (courant != 0)
+   {
+      if (courant->dest->nom == sommetDeux)
+         return true;
+
+      courant = courant->suivDest;
+   }
 
    return false;
 }
