@@ -74,6 +74,17 @@ int main()
          cout << arcs[i] << endl;
       }
 
+      Ponderations ponderQuebecMontreal = graph.getPonderationsArc("Quebec","Montreal");
+      cout << "Pondération Quebec->Montreal = "
+           << ponderQuebecMontreal.duree << ", "
+           << ponderQuebecMontreal.cout << ", "
+           << ponderQuebecMontreal.ns << endl;
+      Ponderations ponderMontrealParis = graph.getPonderationsArc("Montreal","Paris");
+      cout << "Pondération Montreal->Paris = "
+           << ponderMontrealParis.duree << ", "
+           << ponderMontrealParis.cout << ", "
+           << ponderMontrealParis.ns << endl;
+
 
 
       //cin>>comm;
