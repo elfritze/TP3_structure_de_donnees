@@ -117,6 +117,10 @@ int main()
          cout << arcs[i] << endl;
       }
 
+      cout << "Est vide avant destruction? 0 = " << graph.estVide() << endl;
+      graph.detruireGraphe();
+      cout << "Est vide? 1 = " << graph.estVide() << endl;
+      cout << "Sommet existe? Montreal : 0 = " << graph.sommetExiste("Montreal") << endl;
 
 
       //cin>>comm;

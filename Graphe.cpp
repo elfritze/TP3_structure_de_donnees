@@ -34,7 +34,7 @@ Graphe::Graphe()
  */
 Graphe::~Graphe()
 {
-   //detruireGraphe();
+   detruireGraphe();
 }
 
 /**
@@ -218,9 +218,10 @@ void Graphe::ajouterArc(const std::string& nom1, const std::string& nom2,
  */
 void Graphe::enleverSommet(const std::string& nom)
 {
-   //précondition : Le sommet doit exister
-
    //exception : logic_error si le sommet spécifié en argument n'existe pas
+
+
+   // Penser à faire un delete sur tous les arcs du sommet à supprimer
 }
 
 /**
@@ -581,11 +582,46 @@ float Graphe::getDistance(const std::string& sommetUn, const std::string& sommet
 }
 
 /**
- * \fn void detruireGraphe()
+ * \fn void Graphe::detruireGraphe()
  */
-void detruireGraphe()
+void Graphe::detruireGraphe()
 {
+   if (!estVide())
+   {
+      Sommet * tempSommet = listeSommets;
+      Sommet * sommetCourant = listeSommets;
+      Arc * arcCourant(sommetCourant->listeDest);
+      Arc * tempArc(arcCourant);
 
+      // On supprime tous les sommets de la liste des sommets
+      while (tempSommet != 0)
+      {
+         tempSommet = sommetCourant->suivant;
+
+         // On supprime tous les arcs partant du sommet
+         while (arcCourant != 0)
+         {
+            tempArc = arcCourant->suivDest;
+
+            arcCourant->dest = 0;
+            arcCourant->suivDest = 0;
+            delete arcCourant;
+            nbArcs--;
+
+            arcCourant = tempArc;
+         }
+
+         sommetCourant->listeDest = 0;
+         sommetCourant->precedent = 0;
+         sommetCourant->suivant = 0;
+         delete sommetCourant;
+         nbSommets--;
+
+         sommetCourant = tempSommet;
+      }
+
+      listeSommets = 0;
+   }
 }
 
 
