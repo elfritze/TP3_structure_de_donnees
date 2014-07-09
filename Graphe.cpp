@@ -200,6 +200,7 @@ void Graphe::ajouterArc(const std::string& nom1, const std::string& nom2,
    }
    else
    {
+      // On ajoute l'arc à la fin
       while (courant->suivDest != 0)
       {
          courant = courant->suivDest;
@@ -230,11 +231,64 @@ void Graphe::enleverSommet(const std::string& nom)
  */
 void Graphe::enleverArc(const std::string& nom1, const std::string& nom2)
 {
-   //précondition : Les deux sommets identifiés par leur nom doivent appartenir au graphe.
-   //précondition : Un arc reliant les deux sommets doit exister.
+   // Exception si un des deux sommets, ou les deux, n'existent pas
+   if (!sommetExiste(nom1) || !sommetExiste(nom2))
+      throw std::logic_error("enleverArc: Un des deux sommets n'existe pas.");
 
-   //exception : logic_error si un des deux sommets, ou les deux, n'existent pas
-   //exception : logic_error s'il n'y a pas d'arc entre les 2 sommets
+   // On parcourt la liste des sommets pour trouver le sommet de nom1
+   Sommet * sommet1 = 0;
+   Sommet * sommetCourant = listeSommets;
+   for (int i = 0; i < nbSommets; i++)
+   {
+      if (sommetCourant->nom == nom1)
+      {
+         sommet1 = sommetCourant;
+         break;
+      }
+
+      sommetCourant = sommetCourant->suivant;
+   }
+
+   // On cherche l'arc à supprimer dans la liste
+   bool existe = false;
+   Arc * aSupprimer(sommet1->listeDest);
+
+   // On redirige les pointeurs suivDest avant de supprimer
+   // Si l'arc à supprimer est le premier de la liste
+   if (sommet1->listeDest->dest->nom == nom2)
+   {
+      sommet1->listeDest = aSupprimer->suivDest;
+      existe = true;
+   }
+   else
+   {
+      // Sinon, on cherche l'arc précédent à celui à supprimer
+      Arc * precedent(aSupprimer);
+      while (precedent->suivDest != 0)
+      {
+         if (precedent->suivDest->dest->nom == nom2)
+         {
+            // et on trouve l'arc à supprimer
+            aSupprimer = precedent->suivDest;
+            existe = true;
+            break;
+         }
+         precedent = precedent->suivDest;
+      }
+
+      // on redirige le pointeur
+      precedent->suivDest = aSupprimer->suivDest;
+   }
+
+   // Exception s'il n'y a pas d'arc entre les deux sommets
+   if (!existe)
+      throw std::logic_error("enleverArc: L'arc n'existe pas.");
+
+   // On supprime l'arc
+   aSupprimer->dest = 0;
+   aSupprimer->suivDest = 0;
+   delete aSupprimer;
+   nbArcs--;
 }
 
 /**
@@ -399,10 +453,10 @@ Ponderations Graphe::getPonderationsArc(const std::string& sommetUn, const std::
    if (!sommetExiste(sommetUn) || !sommetExiste(sommetDeux))
       throw std::logic_error("getPonderationsArc: Un des deux sommets n'existe pas.");
 
-   Sommet * sommet1 = 0;
-   Sommet * sommetCourant = listeSommets;
 
    // On parcourt la liste des sommets pour trouver le sommetUn
+   Sommet * sommet1 = 0;
+   Sommet * sommetCourant = listeSommets;
    for (int i = 0; i < nbSommets; i++)
    {
       if (sommetCourant->nom == sommetUn)

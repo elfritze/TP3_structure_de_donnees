@@ -31,7 +31,9 @@ int main()
       graph.ajouterSommet("Quebec",46.80,-71.24);
       graph.ajouterSommet("Montreal",45.51,-73.55);
       graph.ajouterSommet("Paris",48.86,2.35);
+      graph.ajouterSommet("Ottawa",45.41,-75.70);
 
+      cout << "Est vide? 0 = " << graph.estVide() << endl;
       cout << "Sommet existe? 1 = " << graph.sommetExiste("Quebec") << endl;
 
       vector<string> sommets = graph.listerNomsSommets();
@@ -40,35 +42,41 @@ int main()
          cout << sommets.at(i) << endl;
       }
 
-      cout << "Est vide? 0 = " << graph.estVide() << endl;
       cout << "Nombre de sommets : " << graph.nombreSommets() << endl;
 
       cout << "Quebec = " << graph.getNomSommet(46.80,-71.24) << endl;
       cout << "Montreal = " << graph.getNomSommet(45.51,-73.55) << endl;
       cout << "Paris = " << graph.getNomSommet(48.86,2.35) << endl;
+      cout << "Ottawa = " << graph.getNomSommet(45.41,-75.70) << endl;
 
       Coordonnees coordQuebec = graph.getCoordonnesSommet("Quebec");
       Coordonnees coordMontreal = graph.getCoordonnesSommet("Montreal");
       Coordonnees coordParis = graph.getCoordonnesSommet("Paris");
+      Coordonnees coordOttawa = graph.getCoordonnesSommet("Ottawa");
 
       cout << "Quebec : " << coordQuebec.lt << "," << coordQuebec.lg << endl;
       cout << "Montreal : " << coordMontreal.lt << "," << coordMontreal.lg << endl;
       cout << "Paris : " << coordParis.lt << "," << coordParis.lg << endl;
+      cout << "Ottawa : " << coordOttawa.lt << "," << coordOttawa.lg << endl;
 
       cout << "Distance entre Quebec et Montreal = " << graph.getDistance("Quebec","Montreal") << endl;
       cout << "Distance entre Montreal et Paris = " << graph.getDistance("Montreal","Paris") << endl;
 
-      cout << "Arc existe? 0 = " << graph.arcExiste("Quebec","Montreal") << endl;
-      cout << "Arc existe? 0 = " << graph.arcExiste("Montreal","Quebec") << endl;
-      cout << "Arc existe? 0 = " << graph.arcExiste("Montreal","Paris") << endl;
+      cout << "Arc existe? Quebec->Montreal : 0 = " << graph.arcExiste("Quebec","Montreal") << endl;
+      cout << "Arc existe? Montreal->Quebec : 0 = " << graph.arcExiste("Montreal","Quebec") << endl;
+      cout << "Arc existe? Montreal->Paris : 0 = " << graph.arcExiste("Montreal","Paris") << endl;
+      cout << "Arc existe? Montreal->Ottawa : 0 = " << graph.arcExiste("Montreal","Ottawa") << endl;
       graph.ajouterArc("Quebec", "Montreal", 0.80, 220.46, -1);
       graph.ajouterArc("Montreal", "Quebec", 0.83, 149.78, 2);
       graph.ajouterArc("Montreal", "Paris", 6.27, 723.96, -2);
-      cout << "Arc existe? 1 = " << graph.arcExiste("Quebec","Montreal") << endl;
-      cout << "Arc existe? 1 = " << graph.arcExiste("Montreal","Quebec") << endl;
-      cout << "Arc existe? 1 = " << graph.arcExiste("Montreal","Paris") << endl;
+      graph.ajouterArc("Montreal", "Ottawa", 0.66, 192.46, -1);
+      cout << "Arc existe? Quebec->Montreal : 1 = " << graph.arcExiste("Quebec","Montreal") << endl;
+      cout << "Arc existe? Montreal->Quebec : 1 = " << graph.arcExiste("Montreal","Quebec") << endl;
+      cout << "Arc existe? Montreal->Paris : 1 = " << graph.arcExiste("Montreal","Paris") << endl;
+      cout << "Arc existe? Montreal->Ottawa : 1 = " << graph.arcExiste("Montreal","Ottawa") << endl;
 
       vector<string> arcs = graph.listerSommetsAdjacents("Montreal");
+      cout << "arcs (sommets adjacents) de Montreal : " << endl;
       for(int i = 0 ; (unsigned)i < arcs.size(); i++)
       {
          cout << arcs[i] << endl;
@@ -84,6 +92,30 @@ int main()
            << ponderMontrealParis.duree << ", "
            << ponderMontrealParis.cout << ", "
            << ponderMontrealParis.ns << endl;
+
+      graph.enleverArc("Quebec","Montreal");
+      cout << "Arc existe? Quebec->Montreal : 0 = " << graph.arcExiste("Quebec","Montreal") << endl;
+      graph.enleverArc("Montreal","Paris");
+      cout << "Arc existe? Montreal->Quebec : 1 = " << graph.arcExiste("Montreal","Quebec") << endl;
+      cout << "Arc existe? Montreal->Paris : 0 = " << graph.arcExiste("Montreal","Paris") << endl;
+      cout << "Arc existe? Montreal->Ottawa : 1 = " << graph.arcExiste("Montreal","Ottawa") << endl;
+
+      arcs = graph.listerSommetsAdjacents("Montreal");
+      cout << "arcs (sommets adjacents) de Montreal : " << endl;
+      for(int i = 0 ; (unsigned)i < arcs.size(); i++)
+      {
+         cout << arcs[i] << endl;
+      }
+
+      graph.enleverArc("Montreal","Quebec");
+      cout << "Arc existe? Montreal->Quebec : 0 = " << graph.arcExiste("Montreal","Quebec") << endl;
+
+      arcs = graph.listerSommetsAdjacents("Montreal");
+      cout << "arcs (sommets adjacents) de Montreal : " << endl;
+      for(int i = 0 ; (unsigned)i < arcs.size(); i++)
+      {
+         cout << arcs[i] << endl;
+      }
 
 
 
