@@ -267,12 +267,36 @@ std::vector<std::string> Graphe::listerNomsSommets() const
  */
 std::vector<std::string> Graphe::listerSommetsAdjacents(const std::string& nom) const
 {
-   //précondition : Le sommet doit appartenir au graphe.
+   bool existeSommet = false;
+   Sommet * sommet = 0;
+   Sommet * sommetCourant = listeSommets;
 
-   //exception : logic_error si le sommet n'existe pas
+   // On parcourt la liste des sommets pour trouver le sommet
+   for (int i = 0; i < nbSommets; i++)
+   {
+      if (sommetCourant->nom == nom)
+      {
+         sommet = sommetCourant;
+         existeSommet = true;
+         break;
+      }
 
+      sommetCourant = sommetCourant->suivant;
+   }
 
+   // Exception si le sommet n'existe pas
+   if (!existeSommet)
+      throw std::logic_error("listerSommetsAdjacents: Le sommet n'existe pas.");
+
+   // On parcourt la liste des arcs du sommet pour retourner les destinations dans le vecteur
    std::vector<std::string> retour;
+   Arc * courant(sommet->listeDest);
+   while (courant != 0)
+   {
+      retour.push_back(courant->dest->nom);
+      courant = courant->suivDest;
+   }
+
    return retour;
 }
 

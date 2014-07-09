@@ -68,6 +68,12 @@ int main()
       cout << "Arc existe? 1 = " << graph.arcExiste("Montreal","Quebec") << endl;
       cout << "Arc existe? 1 = " << graph.arcExiste("Montreal","Paris") << endl;
 
+      vector<string> arcs = graph.listerSommetsAdjacents("Montreal");
+      for(int i = 0 ; (unsigned)i < arcs.size(); i++)
+      {
+         cout << arcs[i] << endl;
+      }
+
 
 
       //cin>>comm;
