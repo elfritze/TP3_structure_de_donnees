@@ -300,7 +300,14 @@ private:
    Sommet * listeSommets;	/*!< Liste des sommets du graphe. */
 
 
-   //Vous pouvez ajoutez d'autres méthodes privées si vous sentez leur nécessité
+   // Méthode privée
+
+   /**
+    * \brief Cette méthode privée sert à copier.
+    *
+    * \post Une copie profonde est créée.
+    */
+   void _copier(Sommet * ls);
 
 };
 

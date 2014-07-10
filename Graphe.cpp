@@ -44,7 +44,14 @@ Graphe::~Graphe()
  */
 Graphe::Graphe(const Graphe &source)
 {
-   //Constructeur de copie
+   nbSommets = source.nbSommets;
+   nbArcs = source.nbArcs;
+   listeSommets = 0;
+
+   if (source.listeSommets != 0)
+   {
+      _copier(source.listeSommets);
+   }
 }
 
 /**
@@ -56,7 +63,26 @@ Graphe::Graphe(const Graphe &source)
  */
 Graphe& Graphe::operator=(const Graphe& src)
 {
-   return *this;
+   if (this != &src)
+   {
+      // Si l'objet courant n'est pas vide
+      if (nbSommets != 0)
+      {
+         detruireGraphe();
+      }
+
+      // On copie à partir du début
+      nbSommets = src.nbSommets;
+      nbArcs = src.nbArcs;
+      listeSommets = 0;
+
+      if (src.listeSommets != 0)
+      {
+         _copier(src.listeSommets);
+      }
+   }
+
+   return (*this);
 }
 
 /**
@@ -190,22 +216,23 @@ void Graphe::ajouterArc(const std::string& nom1, const std::string& nom2,
    ajout->suivDest = 0;
 
 
-   // On fait l'ajout dans listeDest
-   Arc* courant(sommet1->listeDest); // pointeur de service
+   // pointeur de service
+   Arc* courant = sommet1->listeDest;
 
-   if (courant == 0)    // Si listeDest de sommetUn est vide
+   // On fait l'ajout dans listeDest
+   if (courant == 0)
    {
+      // Si listeDest de sommetUn est vide, on ajoute au début
       sommet1->listeDest = ajout;
       nbArcs++;
    }
    else
    {
-      // On ajoute l'arc à la fin
+      // On cherche le dernier arc de la liste
       while (courant->suivDest != 0)
-      {
          courant = courant->suivDest;
-      }
 
+      // On ajoute l'arc à la fin
       courant->suivDest = ajout;
       nbArcs++;
    }
@@ -252,7 +279,7 @@ void Graphe::enleverArc(const std::string& nom1, const std::string& nom2)
 
    // On cherche l'arc à supprimer dans la liste
    bool existe = false;
-   Arc * aSupprimer(sommet1->listeDest);
+   Arc * aSupprimer = sommet1->listeDest;
 
    // On redirige les pointeurs suivDest avant de supprimer
    // Si l'arc à supprimer est le premier de la liste
@@ -264,7 +291,7 @@ void Graphe::enleverArc(const std::string& nom1, const std::string& nom2)
    else
    {
       // Sinon, on cherche l'arc précédent à celui à supprimer
-      Arc * precedent(aSupprimer);
+      Arc * precedent = aSupprimer;
       while (precedent->suivDest != 0)
       {
          if (precedent->suivDest->dest->nom == nom2)
@@ -345,7 +372,7 @@ std::vector<std::string> Graphe::listerSommetsAdjacents(const std::string& nom) 
 
    // On parcourt la liste des arcs du sommet pour retourner les destinations dans le vecteur
    std::vector<std::string> retour;
-   Arc * courant(sommet->listeDest);
+   Arc * courant = sommet->listeDest;
    while (courant != 0)
    {
       retour.push_back(courant->dest->nom);
@@ -427,7 +454,7 @@ bool Graphe::arcExiste(const std::string& sommetUn, const std::string& sommetDeu
    }
 
    // On parcourt la liste des arcs du sommetUn
-   Arc * courant(sommetCourant->listeDest);
+   Arc * courant = sommetCourant->listeDest;
    while (courant != 0)
    {
       if (courant->dest->nom == sommetDeux)
@@ -471,7 +498,7 @@ Ponderations Graphe::getPonderationsArc(const std::string& sommetUn, const std::
 
    // On parcourt la liste des arcs du sommetUn pour trouver celui vers sommetDeux
    bool existe = false;
-   Arc * courant(sommet1->listeDest);
+   Arc * courant = sommet1->listeDest;
    while (courant != 0)
    {
       if (courant->dest->nom == sommetDeux)
@@ -590,8 +617,8 @@ void Graphe::detruireGraphe()
    {
       Sommet * tempSommet = listeSommets;
       Sommet * sommetCourant = listeSommets;
-      Arc * arcCourant(sommetCourant->listeDest);
-      Arc * tempArc(arcCourant);
+      Arc * arcCourant = sommetCourant->listeDest;
+      Arc * tempArc = arcCourant;
 
       // On supprime tous les sommets de la liste des sommets
       while (tempSommet != 0)
@@ -606,7 +633,6 @@ void Graphe::detruireGraphe()
             arcCourant->dest = 0;
             arcCourant->suivDest = 0;
             delete arcCourant;
-            nbArcs--;
 
             arcCourant = tempArc;
          }
@@ -615,12 +641,109 @@ void Graphe::detruireGraphe()
          sommetCourant->precedent = 0;
          sommetCourant->suivant = 0;
          delete sommetCourant;
-         nbSommets--;
 
          sommetCourant = tempSommet;
       }
 
+      nbSommets = 0;
+      nbArcs = 0;
       listeSommets = 0;
+   }
+}
+
+/**
+ * \fn void Graphe::_copier(Sommet * ls)
+ *
+ * \param[in] ls : un pointeur sur la liste des sommets de la source.
+ */
+void Graphe::_copier(Sommet * ls)
+{
+   try
+   {
+      // On copie le premier sommet
+      Sommet * s1 = ls;
+      listeSommets = new Sommet(s1->nom, s1->coord);
+
+      // On copie le reste de la liste des sommets
+      Sommet * nouveau = listeSommets;
+      for (Sommet * temp = s1->suivant; temp != 0; temp = temp->suivant)
+      {
+         nouveau->suivant = new Sommet(temp->nom, temp->coord);
+         nouveau = nouveau->suivant;
+      }
+
+      // On copie tous les arcs de chacun des sommets
+
+      Sommet * dest = 0;             // pointeur pour trouver le sommet de destination
+      Sommet * temp = listeSommets;  // pointeur sur la liste des sommets
+      Sommet * listeSource = ls;     // pointeur sur la liste des sommets de la source
+      Arc * arcs = ls->listeDest;    // pointeur sur la liste de destination (les arcs)
+
+      for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
+      {
+         // Tant qu'il y a des arcs dans la liste de destination du sommet
+         while (arcs != 0)
+         {
+            // On crée l'arc à ajouter
+            Arc * ajout = new Arc;
+
+            // On cherche le sommet de destination dans listeSommets
+            while (temp != 0)
+            {
+               if (arcs->dest->nom == temp->nom)
+               {
+                  dest = temp;
+                  break;
+               }
+
+               temp = temp->suivant;
+            }
+
+            // On initialise les attributs de l'arc
+            ajout->dest = dest;
+            ajout->ponder = arcs->ponder;
+            ajout->suivDest = 0;
+
+            // pointeur de service
+            Arc* arcCourant = courant->listeDest;
+
+            // On fait l'ajout dans listeDest
+            if (arcCourant == 0)
+            {
+               // Si listeDest de sommetUn est vide, on ajoute au début
+               courant->listeDest = ajout;
+            }
+            else
+            {
+               // Sinon, on trouve le dernier arc
+               while (arcCourant->suivDest != 0)
+                  arcCourant = arcCourant->suivDest;
+
+               // On ajoute l'arc à la fin
+               arcCourant->suivDest = ajout;
+            }
+
+            // On passe à l'arc suivant dans la même liste de destination
+            arcs = arcs->suivDest;
+         }
+
+         // On met à jour les pointeurs pour la boucle
+         temp = listeSommets;
+         listeSource = listeSource->suivant;
+
+         if (listeSource != 0)
+            arcs = listeSource->listeDest;
+      }
+
+   }
+   catch (std::exception&)
+   {
+      // Il y a une erreur d'allocation de mémoire
+      // Il faut libérer la mémoire déjà allouée
+      detruireGraphe();
+
+      // On relance alors l'exception pour indiquer qu'une erreur est survenue
+      throw;
    }
 }
 
