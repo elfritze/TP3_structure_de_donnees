@@ -248,7 +248,8 @@ void Graphe::enleverSommet(const std::string& nom)
    //exception : logic_error si le sommet spécifié en argument n'existe pas
 
 
-   // Penser à faire un delete sur tous les arcs du sommet à supprimer
+   // Penser à supprimer tous les arcs qui pointent sur le sommet
+   // et penser à faire un delete sur tous les arcs qui partent du sommet à supprimer
 }
 
 /**
@@ -710,7 +711,7 @@ void Graphe::_copier(Sommet * ls)
             // On fait l'ajout dans listeDest
             if (arcCourant == 0)
             {
-               // Si listeDest de sommetUn est vide, on ajoute au début
+               // Si listeDest est vide, on ajoute au début
                courant->listeDest = ajout;
             }
             else

@@ -44,7 +44,7 @@ struct Chemin
    float coutTotal;   /*!< Cout total en dollars du chemin entre la ville de départ et la ville
                            de destination */
    int nsTotal;       /*!< Niveau de sécurité total du chemin */
-   bool reussi;		 /*!< Un booléen qui vaut true si chemin a été trouvé, false sinon */
+   bool reussi;       /*!< Un booléen qui vaut true si chemin a été trouvé, false sinon */
 };
 
 /**
@@ -217,8 +217,8 @@ public:
                           bool dureeCout);
 
 private:
-   Graphe unReseau;			/*!< Le type ReseauAerien est composé d'un graphe. */
-   std::string nomReseau;	/*!< Le nom du réseau (exemple: Air Canada). */
+   Graphe unReseau;        /*!< Le type ReseauAerien est composé d'un graphe. */
+   std::string nomReseau;  /*!< Le nom du réseau (exemple: Air Canada). */
 
 
    // Vous pouvez définir des constantes ici.
