@@ -22,7 +22,7 @@ int main()
    try
    {
       //string comm;
-
+	   string comm;
       Graphe graph;
 
       cout << "Est vide? 1 = " << graph.estVide() << endl;
@@ -35,13 +35,13 @@ int main()
 
       cout << "Est vide? 0 = " << graph.estVide() << endl;
       cout << "Sommet existe? 1 = " << graph.sommetExiste("Quebec") << endl;
-
+	  
       vector<string> sommets = graph.listerNomsSommets();
       for(int i = 0 ; (unsigned)i < sommets.size(); i++)
       {
          cout << sommets.at(i) << endl;
       }
-
+	  
       cout << "Nombre de sommets : " << graph.nombreSommets() << endl;
 
       cout << "Quebec = " << graph.getNomSommet(46.80,-71.24) << endl;
@@ -74,7 +74,8 @@ int main()
       cout << "Arc existe? Montreal->Quebec : 1 = " << graph.arcExiste("Montreal","Quebec") << endl;
       cout << "Arc existe? Montreal->Paris : 1 = " << graph.arcExiste("Montreal","Paris") << endl;
       cout << "Arc existe? Montreal->Ottawa : 1 = " << graph.arcExiste("Montreal","Ottawa") << endl;
-
+	  graph.enleverSommet("Quebec");
+	  
       vector<string> arcs = graph.listerSommetsAdjacents("Montreal");
       cout << "arcs (sommets adjacents) de Montreal : " << endl;
       for(int i = 0 ; (unsigned)i < arcs.size(); i++)
