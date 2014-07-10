@@ -59,7 +59,7 @@ Graphe::Graphe(const Graphe &source)
  *
  * \param[in] src : Un objet Graphe existant.
  *
- * \return L'objet courant contenant à présent les données de l'objet source.
+ * \return L'objet courant contenant à présent les données de l'objet src.
  */
 Graphe& Graphe::operator=(const Graphe& src)
 {
