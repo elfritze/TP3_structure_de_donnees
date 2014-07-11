@@ -288,7 +288,7 @@ void Graphe::enleverSommet(const std::string& nom)
    }
 
     
-
+   nbSommets--;
     
    // Penser à supprimer tous les arcs qui pointent sur le sommet
    // et penser à faire un delete sur tous les arcs qui partent du sommet à supprimer
