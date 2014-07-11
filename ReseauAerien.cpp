@@ -51,7 +51,7 @@ ReseauAerien& ReseauAerien::operator=(const ReseauAerien& src)
  */
 std::ostream& operator<<(std::ostream& out, const ReseauAerien& g)
 {
-   return out;
+   return out << g.unReseau;
 }
 
 /**
@@ -62,8 +62,51 @@ std::ostream& operator<<(std::ostream& out, const ReseauAerien& g)
 void ReseauAerien::chargerReseau(std::ifstream & fichierEntree)
 {
    //exception logic_error si fichierEntree n'est pas ouvert correctement.
+   if (!fichierEntree.is_open())
+      throw std::logic_error("chargerReseau: Le fichier texte n'est pas ouvert correctement.");
 
-   //À noter : fichierEntree n'est pas fermé par la fonction.
+   // Variables pour la lecture du fichier
+   std::string line, nom, ville1, ville2;
+   int nbVilles, nbTrajets, ns;
+   float lt, lg, duree, cout;
+
+   // lecture du fichier pour récupérer le nom du réseau aérien
+   fichierEntree.ignore(15);
+   getline(fichierEntree, nom);
+
+   nomReseau = nom;
+
+   // récupération du nombre de sommets et du nombre d'arcs (pour les compteurs des boucles)
+   fichierEntree >> nbVilles;
+   getline(fichierEntree, line);
+   fichierEntree >> nbTrajets;
+   getline(fichierEntree, line);
+   getline(fichierEntree, line);
+
+   // ajout des villes (sommets) au graphe
+   for (int i = 0; i < nbVilles; i++)
+   {
+      getline(fichierEntree, ville1);
+      fichierEntree >> lt;
+      fichierEntree >> lg;
+      fichierEntree.ignore(1,'\n');
+
+      unReseau.ajouterSommet(ville1, lt, lg);
+   }
+
+   // ajout des trajets (arcs) au graphe
+   getline(fichierEntree,line);
+   for (int j = 0; j < nbTrajets; j++)
+   {
+      getline(fichierEntree, ville1);
+      getline(fichierEntree, ville2);
+      fichierEntree >> duree;
+      fichierEntree >> cout;
+      fichierEntree >> ns;
+      fichierEntree.ignore(1,'\n');
+
+      unReseau.ajouterArc(ville1, ville2, duree, cout, ns);
+   }
 }
 
 /**
