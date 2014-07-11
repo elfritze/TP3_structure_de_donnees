@@ -221,11 +221,13 @@ public:
     * \brief Méthode pour afficher le graphe du réseau aérien dans Graphviz.
     *
     * \pre Le fichier out est ouvert correctement.
+    * \pre dureeCoutNiveau a comme valeur 1, 2 ou 3.
     *
     * \post Le réseau original reste inchangé.
     * \post Le réseau est sauvegardé dans le fichier out pour être manipulé par Graphviz.
     *
     * \exception logic_error : si le fichier out est incorrect.
+    * \exception logic_error : si dureeCoutNiveau est différent des valeurs 1, 2 ou 3.
     */
    void displayInGraphviz(std::ostream & out, int dureeCoutNiveau);
 

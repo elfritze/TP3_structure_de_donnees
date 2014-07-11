@@ -30,16 +30,18 @@ int main()
 
       cout << reseau;
 
-      // Sauvegarde du réseau dans un fichier textef
+      // Sauvegarde du réseau dans un fichier texte
       ofstream out("Test.txt",ios::out);
       reseau.sauvegarderReseau(out);
       out.close();
 
+      // Fermeture transitive
       ReseauAerien fermeture = reseau.fermetureReseau();
+
       cout << fermeture;
 
 
-      // Génération des graphes avec GraphViz
+      // Génération des graphes avec Graphviz
       // Graphe pour la durée
       // ofstream fichierGraphviz("Graphe.def");
       // reseau.displayInGraphviz(fichierGraphviz, 1);

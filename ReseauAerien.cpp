@@ -303,7 +303,10 @@ Chemin ReseauAerien::algorithmeAstar(const std::string& origine, const std::stri
 void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
 {
    if (!out.good())
-      throw std::logic_error("displayInGraphViz(): fichier incorrect");
+      throw std::logic_error("displayInGraphViz: fichier incorrect");
+
+   if (dureeCoutNiveau < 1 || dureeCoutNiveau > 3)
+      throw std::logic_error("displayInGraphviz: la valeur de l'entier doit être 1, 2 ou 3");
 
    out << "digraph g {" << std::endl;
 
