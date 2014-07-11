@@ -1,7 +1,7 @@
 /**
  * \file Principal.cpp
  * \brief Fichier pour les différents tests
- * \author Étudiant 1, étudiant 2
+ * \author Éric Guillemette, Mathieu L'Écuyer
  * \version 0.1
  * \date juillet 2014
  *
@@ -42,6 +42,13 @@ int main()
 
 
       // Génération des graphes avec Graphviz
+
+      // Graphe sans pondération
+      // ofstream fichierGraphviz("Graphe.def");
+      // reseau.displayInGraphviz(fichierGraphviz, 0);
+      // fichierGraphviz.close();
+      // std::system("dot -Tpng -oGraphe.png Graphe.def");
+
       // Graphe pour la durée
       // ofstream fichierGraphviz("Graphe.def");
       // reseau.displayInGraphviz(fichierGraphviz, 1);

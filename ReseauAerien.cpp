@@ -288,17 +288,18 @@ Chemin ReseauAerien::algorithmeAstar(const std::string& origine, const std::stri
  * \fn void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
  *
  * \param[in] out : un stream vide dans lequel on va écrire.
- * \param[in] dureeCoutNiveau : Un entier de valeur 1 s'il faut utiliser la durée du vol comme
- *                              pondération, 2 s'il faut utiliser le coût du vol ou 3 s'il faut
- *                              utiliser le niveau de sécurité.
+ * \param[in] dureeCoutNiveau : Un entier de valeur 0 pour un graphe sans pondération,
+ *                              1 s'il faut utiliser la durée du vol comme pondération,
+ *                              2 s'il faut utiliser le coût du vol ou 3 s'il faut utiliser
+ *                              le niveau de sécurité.
  */
 void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
 {
    if (!out.good())
       throw std::logic_error("displayInGraphViz: fichier incorrect");
 
-   if (dureeCoutNiveau < 1 || dureeCoutNiveau > 3)
-      throw std::logic_error("displayInGraphviz: la valeur de l'entier doit être 1, 2 ou 3");
+   if (dureeCoutNiveau < 0 || dureeCoutNiveau > 3)
+      throw std::logic_error("displayInGraphviz: la valeur de l'entier doit être 0, 1, 2 ou 3");
 
    out << "digraph g {" << std::endl;
 
@@ -312,6 +313,10 @@ void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
       for (int j = 0; (unsigned)j < arcs.size(); j++)
       {
          Ponderations ponder = unReseau.getPonderationsArc(sommets.at(i),arcs.at(j));
+
+         // sans pondération
+         if (dureeCoutNiveau == 0)
+            out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j) << "\"" << std::endl;
 
          // Pondération pour la durée
          if (dureeCoutNiveau == 1)
