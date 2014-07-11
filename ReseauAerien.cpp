@@ -100,9 +100,9 @@ void ReseauAerien::chargerReseau(std::ifstream & fichierEntree)
 
       unReseau.ajouterSommet(ville1, lt, lg);
    }
+   getline(fichierEntree, line);
 
    // ajout des trajets (arcs) au graphe
-   getline(fichierEntree,line);
    for (int j = 0; j < nbTrajets; j++)
    {
       getline(fichierEntree, ville1);
@@ -124,7 +124,7 @@ void ReseauAerien::chargerReseau(std::ifstream & fichierEntree)
 void ReseauAerien::sauvegarderReseau(std::ofstream & SortieFichier) const
 {
    // Exception si SortieFichier n'est pas ouvert correctement.
-	if (SortieFichier.bad())
+	if (!SortieFichier.is_open())
 		throw std::logic_error("sauvegarderReseau: Le fichier n'est pas ouvert correctement");
 
 	int nbTrajets = 0;
@@ -177,34 +177,43 @@ void ReseauAerien::viderReseau()
  */
 ReseauAerien ReseauAerien::fermetureReseau()
 {
-	std::vector<std::string> sommets = unReseau.listerNomsSommets();
-	for(int k = 0; k < sommets.size();k++){
-		for(int i = 0; i < sommets.size();i++)
-		{
-			for(int j = 0; j < sommets.size();j++)
-			{
-				
-				if(!unReseau.arcExiste(sommets.at(i),sommets.at(k)))
-					unReseau.ajouterArc(sommets.at(i),sommets.at(k),INT_MAX,INT_MAX,INT_MAX);
-				if(!unReseau.arcExiste(sommets.at(k),sommets.at(j)))
-					unReseau.ajouterArc(sommets.at(k),sommets.at(j),INT_MAX,INT_MAX,INT_MAX);
-				if(!unReseau.arcExiste(sommets.at(i),sommets.at(j)))
-					unReseau.ajouterArc(sommets.at(i),sommets.at(j),INT_MAX,INT_MAX,INT_MAX);
+   ReseauAerien r;
+   r.unReseau = unReseau;
+   r.nomReseau = nomReseau;
 
-				Ponderations pond1 = unReseau.getPonderationsArc(sommets.at(i),sommets.at(k));
-				Ponderations pond2 = unReseau.getPonderationsArc(sommets.at(k),sommets.at(j));
-				Ponderations pond3 = unReseau.getPonderationsArc(sommets.at(i),sommets.at(j));
+   std::vector<std::string> sommets = r.unReseau.listerNomsSommets();
 
-				if(pond1.duree + pond2.duree < pond3.duree)
-				{
-					unReseau.enleverArc(sommets.at(i),sommets.at(j));
-					unReseau.ajouterArc(sommets.at(i),sommets.at(j),pond1.duree + pond2.duree,pond1.cout + pond2.cout,pond1.ns + pond2.ns);
-				}
-			}
-		}
-	}
-   return ReseauAerien();
+   for (int k = 0; (unsigned)k < sommets.size(); k++)
+   {
+      for (int i = 0; (unsigned)i < sommets.size(); i++)
+      {
+         for (int j = 0; (unsigned)j < sommets.size(); j++)
+         {
+
+            if(!r.unReseau.arcExiste(sommets.at(i),sommets.at(k)))
+               r.unReseau.ajouterArc(sommets.at(i),sommets.at(k),INT_MAX,INT_MAX,INT_MAX);
+            if(!r.unReseau.arcExiste(sommets.at(k),sommets.at(j)))
+               r.unReseau.ajouterArc(sommets.at(k),sommets.at(j),INT_MAX,INT_MAX,INT_MAX);
+            if(!r.unReseau.arcExiste(sommets.at(i),sommets.at(j)))
+               r.unReseau.ajouterArc(sommets.at(i),sommets.at(j),INT_MAX,INT_MAX,INT_MAX);
+
+            Ponderations pond1 = r.unReseau.getPonderationsArc(sommets.at(i),sommets.at(k));
+            Ponderations pond2 = r.unReseau.getPonderationsArc(sommets.at(k),sommets.at(j));
+            Ponderations pond3 = r.unReseau.getPonderationsArc(sommets.at(i),sommets.at(j));
+
+            if(pond1.duree + pond2.duree < pond3.duree)
+            {
+               r.unReseau.enleverArc(sommets.at(i),sommets.at(j));
+               r.unReseau.ajouterArc(sommets.at(i),sommets.at(j),pond1.duree + pond2.duree,
+                                     pond1.cout + pond2.cout,pond1.ns + pond2.ns);
+            }
+         }
+      }
+   }
+
+   return r;
 }
+
 /**
  * \fn std::vector<std::string> ReseauAerien::rechercheCheminLargeur(const std::string& origine,
  *                                                                   const std::string& destination)
@@ -281,6 +290,52 @@ Chemin ReseauAerien::algorithmeAstar(const std::string& origine, const std::stri
    //exception logic_error : si le départ ou l'arrivée ne fait pas partie du réseau aérien.
 
    return Chemin();
+}
+
+/**
+ * \fn void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
+ *
+ * \param[in] out : un stream vide dans lequel on va écrire.
+ * \param[in] dureeCoutNiveau : Un entier de valeur 1 s'il faut utiliser la durée du vol comme
+ *                              pondération, 2 s'il faut utiliser le coût du vol ou 3 s'il faut
+ *                              utiliser le niveau de sécurité.
+ */
+void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
+{
+   if (!out.good())
+      throw std::logic_error("displayInGraphViz(): fichier incorrect");
+
+   out << "digraph g {" << std::endl;
+
+   std::vector<std::string> sommets = unReseau.listerNomsSommets();
+   for (int i = 0; (unsigned)i < sommets.size(); i++)
+   {
+      std::vector<std::string> arcs = unReseau.listerSommetsAdjacents(sommets.at(i));
+
+      for (int j = 0; (unsigned)j < arcs.size(); j++)
+      {
+         Ponderations ponder = unReseau.getPonderationsArc(sommets.at(i),arcs.at(j));
+
+         // Pondération pour la durée
+         if (dureeCoutNiveau == 1)
+            out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j)
+                << "\" [label=" << ponder.duree << "];" << std::endl;
+
+         // Pondération pour le coût
+         if (dureeCoutNiveau == 2)
+            out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j)
+                << "\" [label=" << ponder.cout << "];" << std::endl;
+
+         // Pondération pour le niveau de sécurité
+         if (dureeCoutNiveau == 3)
+            out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j)
+                << "\" [label=" << ponder.ns << "];" << std::endl;
+      }
+
+      out << sommets.at(i) << std::endl;
+   }
+
+   out << "}" << std::endl;
 }
 
 }//Fin du namespace

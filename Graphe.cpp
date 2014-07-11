@@ -245,9 +245,9 @@ void Graphe::ajouterArc(const std::string& nom1, const std::string& nom2,
  */
 void Graphe::enleverSommet(const std::string& nom)
 {
-   //exception : logic_error si le sommet spécifié en argument n'existe pas
+   //Exception si le sommet spécifié en argument n'existe pas
    if (!sommetExiste(nom))
-      throw std::logic_error("ajouterSommet: Le sommet existe déjà");
+      throw std::logic_error("ajouterSommet: Le sommet n'existe pas");
 
 
    Sommet * courant = 0;
@@ -266,8 +266,8 @@ void Graphe::enleverSommet(const std::string& nom)
    courant = listeSommets;
    if(courant->nom == nom)
    {
-	    listeSommets = courant->suivant;
-	    courant->suivant = 0;
+	   listeSommets = courant->suivant;
+	   courant->suivant = 0;
 		courant = 0;
 		delete courant;
    }
@@ -287,11 +287,7 @@ void Graphe::enleverSommet(const std::string& nom)
 		delete courant;
    }
 
-    
    nbSommets--;
-    
-   // Penser à supprimer tous les arcs qui pointent sur le sommet
-   // et penser à faire un delete sur tous les arcs qui partent du sommet à supprimer
 }
 
 /**

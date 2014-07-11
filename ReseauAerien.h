@@ -14,6 +14,7 @@
 
 #include "Graphe.h"
 #include <climits>
+#include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -136,7 +137,7 @@ public:
    /**
     * \brief Vider le réseau.
     *
-    * \post Le reseau est détruit.
+    * \post Le réseau est détruit.
     */
    void viderReseau();
 
@@ -215,6 +216,18 @@ public:
     */
    Chemin algorithmeAstar(const std::string& origine, const std::string& destination,
                           bool dureeCout);
+
+   /**
+    * \brief Méthode pour afficher le graphe du réseau aérien dans Graphviz.
+    *
+    * \pre Le fichier out est ouvert correctement.
+    *
+    * \post Le réseau original reste inchangé.
+    * \post Le réseau est sauvegardé dans le fichier out pour être manipulé par Graphviz.
+    *
+    * \exception logic_error : si le fichier out est incorrect.
+    */
+   void displayInGraphviz(std::ostream & out, int dureeCoutNiveau);
 
 private:
    Graphe unReseau;        /*!< Le type ReseauAerien est composé d'un graphe. */
