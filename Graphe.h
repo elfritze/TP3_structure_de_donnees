@@ -176,6 +176,13 @@ public:
    int nombreSommets() const;
 
    /**
+    * \brief Retourne le nombre d'arcs présents dans le graphe.
+    *
+    * \post Le graphe reste inchangé.
+    */
+   int nombreArcs() const;
+
+   /**
     * \brief Indique si la liste des sommets est vide.
     *
     * \post Le graphe reste inchangé.

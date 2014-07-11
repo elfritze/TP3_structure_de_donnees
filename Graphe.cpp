@@ -432,6 +432,16 @@ int Graphe::nombreSommets() const
 }
 
 /**
+ * \fn int Graphe::nombreArcs() const
+ *
+ * \return Le nombre d'arcs présents dans le graphe.
+ */
+int Graphe::nombreArcs() const
+{
+   return nbArcs;
+}
+
+/**
  * \fn bool Graphe::estVide() const
  *
  * \return VRAI si la liste des sommets est vide, FAUX sinon.

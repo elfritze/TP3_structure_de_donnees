@@ -127,21 +127,13 @@ void ReseauAerien::sauvegarderReseau(std::ofstream & SortieFichier) const
 	if (!SortieFichier.is_open())
 		throw std::logic_error("sauvegarderReseau: Le fichier n'est pas ouvert correctement");
 
-	int nbTrajets = 0;
-	std::vector<std::string> sommets = unReseau.listerNomsSommets();
-	for (int i = 0; (unsigned)i < sommets.size(); i++)
-	{
-		std::vector<std::string> adjacents = unReseau.listerSommetsAdjacents(sommets.at(i));
-		for (int j = 0; (unsigned)j < adjacents.size(); j++)
-		{
-			nbTrajets++;
-		}
-	}
+
 	SortieFichier << "Reseau Aerien: " << nomReseau << std::endl;
 	SortieFichier << unReseau.nombreSommets() << " villes" << std::endl;
-	SortieFichier << nbTrajets << " trajets" << std::endl;
+	SortieFichier << unReseau.nombreArcs() << " trajets" << std::endl;
 	SortieFichier << "Liste des villes:" << std::endl;
 
+	std::vector<std::string> sommets = unReseau.listerNomsSommets();
 	for (int i = 0; (unsigned)i < sommets.size(); i++)
 	{
 		Coordonnees coord = unReseau.getCoordonnesSommet(sommets.at(i));
@@ -315,6 +307,8 @@ void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
    {
       std::vector<std::string> arcs = unReseau.listerSommetsAdjacents(sommets.at(i));
 
+      out << "\"" << sommets.at(i) << "\"" << std::endl;
+
       for (int j = 0; (unsigned)j < arcs.size(); j++)
       {
          Ponderations ponder = unReseau.getPonderationsArc(sommets.at(i),arcs.at(j));
@@ -334,8 +328,6 @@ void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
             out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j)
                 << "\" [label=" << ponder.ns << "];" << std::endl;
       }
-
-      out << sommets.at(i) << std::endl;
    }
 
    out << "}" << std::endl;
