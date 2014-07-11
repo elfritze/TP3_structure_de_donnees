@@ -26,7 +26,8 @@ namespace TP3
  */
 ReseauAerien::ReseauAerien(const ReseauAerien &source)
 {
-   //Constructeur de copie
+   unReseau = source.unReseau;   // Surcharge de l'opérateur d'affectation de la classe Graphe
+   nomReseau = source.nomReseau;
 }
 
 /**
@@ -38,6 +39,12 @@ ReseauAerien::ReseauAerien(const ReseauAerien &source)
  */
 ReseauAerien& ReseauAerien::operator=(const ReseauAerien& src)
 {
+   if (this != &src)
+   {
+      unReseau = src.unReseau;   // Surcharge de l'opérateur d'affectation de la classe Graphe
+      nomReseau = src.nomReseau;
+   }
+
    return (*this);
 }
 
@@ -61,7 +68,7 @@ std::ostream& operator<<(std::ostream& out, const ReseauAerien& g)
  */
 void ReseauAerien::chargerReseau(std::ifstream & fichierEntree)
 {
-   //exception logic_error si fichierEntree n'est pas ouvert correctement.
+   // Exception si fichierEntree n'est pas ouvert correctement.
    if (!fichierEntree.is_open())
       throw std::logic_error("chargerReseau: Le fichier texte n'est pas ouvert correctement.");
 
@@ -116,45 +123,43 @@ void ReseauAerien::chargerReseau(std::ifstream & fichierEntree)
  */
 void ReseauAerien::sauvegarderReseau(std::ofstream & SortieFichier) const
 {
-
-	if(SortieFichier.bad())
-		throw std::logic_error("Le fichier n'est pas ouvert correctement");
+   // Exception si SortieFichier n'est pas ouvert correctement.
+	if (SortieFichier.bad())
+		throw std::logic_error("sauvegarderReseau: Le fichier n'est pas ouvert correctement");
 
 	int nbTrajets = 0;
 	std::vector<std::string> sommets = unReseau.listerNomsSommets();
-	for(int i = 0;i < sommets.size(); i++)
+	for (int i = 0; (unsigned)i < sommets.size(); i++)
 	{
 		std::vector<std::string> adjacents = unReseau.listerSommetsAdjacents(sommets.at(i));
-		for(int j = 0;j<adjacents.size();j++)
+		for (int j = 0; (unsigned)j < adjacents.size(); j++)
 		{
 			nbTrajets++;
 		}
 	}
-	SortieFichier<< "Reseau Aerien: "<<nomReseau<<std::endl;
-	SortieFichier<<unReseau.nombreSommets()<<" villes"<<std::endl;
-	SortieFichier<<nbTrajets<<" trajets"<<std::endl;
-	SortieFichier<<"Liste des villes:"<<std::endl;
+	SortieFichier << "Reseau Aerien: " << nomReseau << std::endl;
+	SortieFichier << unReseau.nombreSommets() << " villes" << std::endl;
+	SortieFichier << nbTrajets << " trajets" << std::endl;
+	SortieFichier << "Liste des villes:" << std::endl;
 
-
-	for(int i = 0;i < sommets.size(); i++)
+	for (int i = 0; (unsigned)i < sommets.size(); i++)
 	{
 		Coordonnees coord = unReseau.getCoordonnesSommet(sommets.at(i));
-		SortieFichier<<sommets.at(i)<<std::endl<<coord.lt<<" "<<coord.lg<<std::endl;
+		SortieFichier << sommets.at(i) << std::endl << coord.lt << " " << coord.lg << std::endl;
 	}
 
-	SortieFichier<<"Liste des trajets:"<<std::endl;
-	for(int i = 0;i < sommets.size(); i++)
+	SortieFichier << "Liste des trajets:" << std::endl;
+	for (int i = 0; (unsigned)i < sommets.size(); i++)
 	{
 		std::vector<std::string> adjacents = unReseau.listerSommetsAdjacents(sommets.at(i));
-		for(int j = 0;j<adjacents.size();j++)
+		for (int j = 0; (unsigned)j < adjacents.size(); j++)
 		{
 			Ponderations pond = unReseau.getPonderationsArc(sommets.at(i),adjacents.at(j));
-			SortieFichier<<sommets.at(i)<<std::endl;
-			SortieFichier<<adjacents.at(j)<<std::endl;
-			SortieFichier<<pond.duree<<" "<<pond.cout<<" "<<pond.ns<<std::endl;
+			SortieFichier << sommets.at(i) << std::endl;
+			SortieFichier << adjacents.at(j) << std::endl;
+			SortieFichier << pond.duree << " " << pond.cout << " " << pond.ns << std::endl;
 		}
 	}
-
 }
 
 /**
@@ -162,7 +167,7 @@ void ReseauAerien::sauvegarderReseau(std::ofstream & SortieFichier) const
  */
 void ReseauAerien::viderReseau()
 {
-
+   unReseau.detruireGraphe();
 }
 
 /**
