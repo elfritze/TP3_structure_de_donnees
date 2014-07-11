@@ -177,9 +177,34 @@ void ReseauAerien::viderReseau()
  */
 ReseauAerien ReseauAerien::fermetureReseau()
 {
+	std::vector<std::string> sommets = unReseau.listerNomsSommets();
+	for(int k = 0; k < sommets.size();k++){
+		for(int i = 0; i < sommets.size();i++)
+		{
+			for(int j = 0; j < sommets.size();j++)
+			{
+				
+				if(!unReseau.arcExiste(sommets.at(i),sommets.at(k)))
+					unReseau.ajouterArc(sommets.at(i),sommets.at(k),INT_MAX,INT_MAX,INT_MAX);
+				if(!unReseau.arcExiste(sommets.at(k),sommets.at(j)))
+					unReseau.ajouterArc(sommets.at(k),sommets.at(j),INT_MAX,INT_MAX,INT_MAX);
+				if(!unReseau.arcExiste(sommets.at(i),sommets.at(j)))
+					unReseau.ajouterArc(sommets.at(i),sommets.at(j),INT_MAX,INT_MAX,INT_MAX);
+
+				Ponderations pond1 = unReseau.getPonderationsArc(sommets.at(i),sommets.at(k));
+				Ponderations pond2 = unReseau.getPonderationsArc(sommets.at(k),sommets.at(j));
+				Ponderations pond3 = unReseau.getPonderationsArc(sommets.at(i),sommets.at(j));
+
+				if(pond1.duree + pond2.duree < pond3.duree)
+				{
+					unReseau.enleverArc(sommets.at(i),sommets.at(j));
+					unReseau.ajouterArc(sommets.at(i),sommets.at(j),pond1.duree + pond2.duree,pond1.cout + pond2.cout,pond1.ns + pond2.ns);
+				}
+			}
+		}
+	}
    return ReseauAerien();
 }
-
 /**
  * \fn std::vector<std::string> ReseauAerien::rechercheCheminLargeur(const std::string& origine,
  *                                                                   const std::string& destination)
