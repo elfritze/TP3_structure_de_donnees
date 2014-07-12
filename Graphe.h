@@ -260,7 +260,34 @@ public:
     */
    void detruireGraphe();
 
-   //Vous pouvez ajoutez d'autres méthodes publiques si vous sentez leur nécessité
+   /**
+    * \brief Retourne l'état d'un sommet passé en argument.
+    *
+    * \pre Le sommet doit faire partie du graphe.
+    *
+    * \post Le graphe reste inchangé.
+    *
+    * \exception logic_error : si le sommet n'existe pas.
+    */
+   bool getEtatSommet(const std::string& nom) const;
+
+   /**
+    * \brief Change l'état d'un sommet passé en argument à vrai.
+    *
+    * \pre Le sommet doit faire partie du graphe.
+    *
+    * \post L'état du sommet est maintenant égal à vrai.
+    *
+    * \exception logic_error : si le sommet n'existe pas.
+    */
+   void marquerEtatSommet(const std::string& nom);
+
+   /**
+    * \brief Permet d'initialiser à faux l'état de tous les sommets du graphe.
+    *
+    * \post Tous les états des sommets du graphe sont maintenant faux.
+    */
+   void initialiserEtats();
 
 private:
    class Sommet;	// Un sommet du graphe, on le déclare ici à cause de la classe Arc qui s'en sert

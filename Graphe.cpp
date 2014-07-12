@@ -701,6 +701,75 @@ void Graphe::detruireGraphe()
 }
 
 /**
+ * \fn bool Graphe::getEtatSommet(const std::string& nom) const
+ *
+ * \param[in] nom : Le nom du sommet.
+ *
+ * \return L'état d'un sommet passé en argument.
+ */
+bool Graphe::getEtatSommet(const std::string& nom) const
+{
+   bool existe = false;
+   bool etat = false;
+
+   //On parcourt la liste des sommets jusqu'à ce que l'on trouve le bon.
+   for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
+   {
+      if (courant->nom == nom)
+      {
+         etat = courant->etat;
+         existe = true;
+         break;
+      }
+   }
+
+   //Exception si le sommet n'existe pas
+   if (!existe)
+      throw std::logic_error("getEtatSommet: Le sommet n'existe pas.");
+
+
+   return etat;
+}
+
+/**
+ * \fn void Graphe::marquerEtatSommet(const std::string& nom)
+ *
+ * \param[in] nom : Le nom du sommet.
+ */
+void Graphe::marquerEtatSommet(const std::string& nom)
+{
+   bool existe = false;
+
+   //On parcourt la liste des sommets jusqu'à ce que l'on trouve le bon.
+   for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
+   {
+      if (courant->nom == nom)
+      {
+         courant->etat = true;
+         existe = true;
+         break;
+      }
+   }
+
+   //Exception si le sommet n'existe pas
+   if (!existe)
+      throw std::logic_error("changerEtatSommet: Le sommet n'existe pas.");
+}
+
+/**
+ * \fn void Graphe::initialiserEtats()
+ */
+void Graphe::initialiserEtats()
+{
+   if (nbSommets != 0)
+   {
+      for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
+         courant->etat = false;
+   }
+}
+
+
+/**
  * \fn void Graphe::_copier(Sommet * ls)
  *
  * \param[in] ls : un pointeur sur la liste des sommets de la source.
