@@ -175,30 +175,27 @@ ReseauAerien ReseauAerien::fermetureReseau()
 
    std::vector<std::string> sommets = r.unReseau.listerNomsSommets();
 
+	//Pour chaque sommet
    for (int k = 0; (unsigned)k < sommets.size(); k++)
    {
+	   //Pour chaque paire de sommets i et j
+	  std::string ville1 = sommets.at(k);
       for (int i = 0; (unsigned)i < sommets.size(); i++)
       {
+		  std::string ville2 = sommets.at(i);
          for (int j = 0; (unsigned)j < sommets.size(); j++)
          {
+			 std::string ville3 = sommets.at(j);
 
-            if(!r.unReseau.arcExiste(sommets.at(i),sommets.at(k)))
-               r.unReseau.ajouterArc(sommets.at(i),sommets.at(k),INT_MAX,INT_MAX,INT_MAX);
-            if(!r.unReseau.arcExiste(sommets.at(k),sommets.at(j)))
-               r.unReseau.ajouterArc(sommets.at(k),sommets.at(j),INT_MAX,INT_MAX,INT_MAX);
-            if(!r.unReseau.arcExiste(sommets.at(i),sommets.at(j)))
-               r.unReseau.ajouterArc(sommets.at(i),sommets.at(j),INT_MAX,INT_MAX,INT_MAX);
-
-            Ponderations pond1 = r.unReseau.getPonderationsArc(sommets.at(i),sommets.at(k));
-            Ponderations pond2 = r.unReseau.getPonderationsArc(sommets.at(k),sommets.at(j));
-            Ponderations pond3 = r.unReseau.getPonderationsArc(sommets.at(i),sommets.at(j));
-
-            if(pond1.duree + pond2.duree < pond3.duree)
-            {
-               r.unReseau.enleverArc(sommets.at(i),sommets.at(j));
-               r.unReseau.ajouterArc(sommets.at(i),sommets.at(j),pond1.duree + pond2.duree,
-                                     pond1.cout + pond2.cout,pond1.ns + pond2.ns);
-            }
+			 //S'il n'existe pas de chemin entre i et j
+			 if(!r.unReseau.arcExiste(ville2,ville3)){
+				 //S'il existe un chemin entre i et k et entre k et j alors on fait un chemin entre i et j
+				 if(r.unReseau.arcExiste(ville2,ville1) && r.unReseau.arcExiste(ville1,ville3))
+				 {
+					 r.unReseau.ajouterArc(ville2,ville3,0,0,0);
+				 }
+			 }
+            
          }
       }
    }
@@ -218,82 +215,10 @@ ReseauAerien ReseauAerien::fermetureReseau()
 std::vector<std::string> ReseauAerien::rechercheCheminLargeur(const std::string& origine,
                                                               const std::string& destination)
 {
-   //Exception si le départ ou l'arrivée ne fait pas partie du réseau aérien.
-   if (!unReseau.sommetExiste(origine) || !unReseau.sommetExiste(destination))
-      throw std::logic_error
-         ("rechercheCheminLargeur: Le départ ou l'arrivée ne fait pas partie du réseau aérien.");
+   //exception logic_error : si le départ ou l'arrivée ne fait pas partie du réseau aérien.
 
-   // Conteneurs pour l'algorithme
-   std::vector<std::string> chemin;
-   std::queue<std::string> fileParcours;
-   std::stack<std::string> pile;
-
-   // On initialise l'état des sommets du graphe
-   unReseau.initialiserEtats();
-
-   // On initialise les pointeurs précédents des sommets du graphe
-   unReseau.initialiserPrecedents();
-
-   // On enfile et on marque le sommet origine
-   fileParcours.push(origine);
-   unReseau.marquerEtatSommet(origine);
-
-   // Tant que la file n'est pas vide
-   // Défiler le prochain sommet
-   // Pour chaque sommets adjacents non marqué : marquer, enfiler et pointer vers précédent
-   std::string courant;
-   std::vector<std::string> adjacents;
-   while (!fileParcours.empty() && courant != destination)
-   {
-      courant = fileParcours.front();
-      adjacents = unReseau.listerSommetsAdjacents(courant);
-
-      for (int i = 0; (unsigned)i < adjacents.size(); i++)
-      {
-         if (!unReseau.getEtatSommet(adjacents[i]))
-         {
-            unReseau.marquerEtatSommet(adjacents[i]);
-            unReseau.setPrecedent(adjacents[i], courant);
-            fileParcours.push(adjacents[i]);
-         }
-      }
-
-      fileParcours.pop();
-   }
-
-   // On crée le chemin en remontant de la destination à l'origine
-   if (origine == destination)
-   {
-      // si la ville de départ est la ville d'arrivée
-      std::cout << "Vous êtes déjà à destination.\n";
-   }
-   else if (unReseau.getPrecedent(destination).empty())
-   {
-      // s'il n'y a pas de chemin pour se rendre à la destinition
-      std::cout << "Destination inatteignable à partir de la ville de départ.\n";
-   }
-   else
-   {
-      // On empile d'abord la destination
-      pile.push(destination);
-
-      // puis on empile les villes précédentes
-      std::string precedent;
-      while (precedent != origine)
-      {
-         precedent = unReseau.getPrecedent(pile.top());
-         pile.push(precedent);
-      }
-
-      // On dépile toutes les villes dans le chemin
-      while (!pile.empty())
-      {
-         chemin.push_back(pile.top());
-         pile.pop();
-      }
-   }
-
-   return chemin;
+   std::vector<std::string> retour;
+   return retour;
 }
 
 /**
@@ -380,7 +305,7 @@ void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
    {
       std::vector<std::string> arcs = unReseau.listerSommetsAdjacents(sommets.at(i));
 
-      out << sommets.at(i) << std::endl;
+      out << "\"" << sommets.at(i) << "\"" << std::endl;
 
       for (int j = 0; (unsigned)j < arcs.size(); j++)
       {
@@ -388,22 +313,22 @@ void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
 
          // sans pondération
          if (dureeCoutNiveau == 0)
-            out << "\t " << sommets.at(i) << " -> " << arcs.at(j) << std::endl;
+            out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j) << "\"" << std::endl;
 
          // Pondération pour la durée
          if (dureeCoutNiveau == 1)
-            out << "\t " << sommets.at(i) << " -> " << arcs.at(j)
-                << " [label=" << ponder.duree << "];" << std::endl;
+            out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j)
+                << "\" [label=" << ponder.duree << "];" << std::endl;
 
          // Pondération pour le coût
          if (dureeCoutNiveau == 2)
-            out << "\t " << sommets.at(i) << " -> " << arcs.at(j)
-                << " [label=" << ponder.cout << "];" << std::endl;
+            out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j)
+                << "\" [label=" << ponder.cout << "];" << std::endl;
 
          // Pondération pour le niveau de sécurité
          if (dureeCoutNiveau == 3)
-            out << "\t " << sommets.at(i) << " -> " << arcs.at(j)
-                << " [label=" << ponder.ns << "];" << std::endl;
+            out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j)
+                << "\" [label=" << ponder.ns << "];" << std::endl;
       }
    }
 

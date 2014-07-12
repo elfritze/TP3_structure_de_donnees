@@ -48,7 +48,7 @@ Paris
 6.27 723.96 -2
 Montreal
 New_York
-1.91 402.78 3 
+1.91 402.78 3
 Paris
 Montreal
 6.32 892.39 3

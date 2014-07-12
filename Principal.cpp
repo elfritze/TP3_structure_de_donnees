@@ -22,7 +22,7 @@ int main()
    try
    {
       ReseauAerien reseau;
-
+	  string comm;
       // Charger le réseau à partir du fichier texte
       ifstream fichier("ReseauAerien.txt",ios::in);
       reseau.chargerReseau(fichier);
@@ -38,9 +38,9 @@ int main()
       // Fermeture transitive
       ReseauAerien fermeture = reseau.fermetureReseau();
 
-      cout << fermeture;
-
-
+      //cout << fermeture;
+	  cout << fermeture;
+	  cin>>comm;
       // Génération des graphes avec Graphviz
 
       // Graphe sans pondération

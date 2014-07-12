@@ -175,7 +175,7 @@ void Graphe::ajouterArc(const std::string& nom1, const std::string& nom2,
    Sommet * sommet1 = 0;
    Sommet * sommet2 = 0;
    Sommet * sommetCourant = listeSommets;
-
+   
    // On parcourt la liste des sommets pour trouver les deux sommets
    for (int i = 0; i < nbSommets; i++)
    {
@@ -886,7 +886,8 @@ void Graphe::_copier(Sommet * ls)
          {
             // On crée l'arc à ajouter
             Arc * ajout = new Arc;
-
+			temp = 0;
+			temp = listeSommets;
             // On cherche le sommet de destination dans listeSommets
             while (temp != 0)
             {
