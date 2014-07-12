@@ -753,7 +753,7 @@ void Graphe::marquerEtatSommet(const std::string& nom)
 
    //Exception si le sommet n'existe pas
    if (!existe)
-      throw std::logic_error("changerEtatSommet: Le sommet n'existe pas.");
+      throw std::logic_error("marquerEtatSommet: Le sommet n'existe pas.");
 }
 
 /**
@@ -766,6 +766,75 @@ void Graphe::initialiserEtats()
       for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
          courant->etat = false;
    }
+}
+
+/**
+ * \fn std::string Graphe::getPrecedent(const std::string& nom)
+ *
+ * \param[in] nom : Le nom du sommet.
+ *
+ * \return Une chaîne de caractères contenant le nom du sommet précédent.
+ */
+std::string Graphe::getPrecedent(const std::string& nom)
+{
+   std::string precedent;
+   bool existe = false;
+
+   //On parcourt la liste des sommets jusqu'à ce que l'on trouve le bon.
+   for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
+   {
+      if (courant->nom == nom)
+      {
+         if (courant->precedent != 0)
+            precedent = courant->precedent->nom;
+
+         existe = true;
+         break;
+      }
+   }
+
+   //Exception si le sommet n'existe pas
+   if (!existe)
+      throw std::logic_error("getPrecedent: Le sommet n'existe pas.");
+
+   return precedent;
+}
+
+/**
+ * \fn method_prototype
+ *
+ * \param[in] sommetUn : Le nom du sommet avec le pointeur précédent à rediriger.
+ * \param[in] sommetDeux : Le nom du sommet vers lequel pointe le pointeur précédent du sommetUn.
+ */
+void Graphe::setPrecedent(const std::string& sommetUn, const std::string& sommetDeux)
+{
+   bool existeSommet1 = false;
+   bool existeSommet2 = false;
+   Sommet * sommet1 = 0;
+   Sommet * sommet2 = 0;
+
+   // On parcourt la liste des sommets pour trouver les deux sommets
+   for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
+   {
+      if (courant->nom == sommetUn)
+      {
+         sommet1 = courant;
+         existeSommet1 = true;
+      }
+
+      if (courant->nom == sommetDeux)
+      {
+         sommet2 = courant;
+         existeSommet2 = true;
+      }
+   }
+
+   // Exception si un des deux sommets n'existe pas
+   if (!existeSommet1 || !existeSommet2)
+      throw std::logic_error("setPrecedent: Un des deux sommets n'existe pas.");
+
+   // On redirige le pointeur précédent du sommetUn vers le sommetDeux
+   sommet1->precedent = sommet2;
 }
 
 

@@ -285,9 +285,33 @@ public:
    /**
     * \brief Permet d'initialiser à faux l'état de tous les sommets du graphe.
     *
-    * \post Tous les états des sommets du graphe sont maintenant faux.
+    * \post Tous les états des sommets du graphe valent faux.
     */
    void initialiserEtats();
+
+   /**
+    * \brief Retourne le nom du sommet précédent au sommet passé en argument.
+    *
+    * \pre Le sommet doit faire partie du graphe.
+    *
+    * \post Le graphe reste inchangé.
+    * \post Le nom du sommet précédent est retourné dans une chaîne de caractères.
+    *
+    * \exception logic_error : si le sommet n'existe pas.
+    */
+   std::string getPrecedent(const std::string& nom);
+
+   /**
+    * \brief Permet de rediriger le pointeur précédent du sommetUn vers le sommetDeux.
+    *
+    * \pre Les deux sommets doivent faire partie du graphe.
+    *
+    * \post Le pointeur précédent du sommetUn pointe à présent sur le sommetDeux.
+    *
+    * \exception logic_error : si l'un ou l'autre des sommets n'existent pas.
+    */
+   void setPrecedent(const std::string& sommetUn, const std::string& sommetDeux);
+
 
 private:
    class Sommet;	// Un sommet du graphe, on le déclare ici à cause de la classe Arc qui s'en sert
