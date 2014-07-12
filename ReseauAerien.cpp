@@ -215,10 +215,82 @@ ReseauAerien ReseauAerien::fermetureReseau()
 std::vector<std::string> ReseauAerien::rechercheCheminLargeur(const std::string& origine,
                                                               const std::string& destination)
 {
-   //exception logic_error : si le départ ou l'arrivée ne fait pas partie du réseau aérien.
+   //Exception si le départ ou l'arrivée ne fait pas partie du réseau aérien.
+   if (!unReseau.sommetExiste(origine) || !unReseau.sommetExiste(destination))
+      throw std::logic_error
+         ("rechercheCheminLargeur: Le départ ou l'arrivée ne fait pas partie du réseau aérien.");
 
-   std::vector<std::string> retour;
-   return retour;
+   // Conteneurs pour l'algorithme
+   std::vector<std::string> chemin;
+   std::queue<std::string> fileParcours;
+   std::stack<std::string> pile;
+
+   // On initialise l'état des sommets du graphe
+   unReseau.initialiserEtats();
+
+   // On initialise les pointeurs précédents des sommets du graphe
+   unReseau.initialiserPrecedents();
+
+   // On enfile et on marque le sommet origine
+   fileParcours.push(origine);
+   unReseau.marquerEtatSommet(origine);
+
+   // Tant que la file n'est pas vide
+   // Défiler le prochain sommet
+   // Pour chaque sommets adjacents non marqué : marquer, enfiler et pointer vers précédent
+   std::string courant;
+   std::vector<std::string> adjacents;
+   while (!fileParcours.empty() && courant != destination)
+   {
+      courant = fileParcours.front();
+      adjacents = unReseau.listerSommetsAdjacents(courant);
+
+      for (int i = 0; (unsigned)i < adjacents.size(); i++)
+      {
+         if (!unReseau.getEtatSommet(adjacents[i]))
+         {
+            unReseau.marquerEtatSommet(adjacents[i]);
+            unReseau.setPrecedent(adjacents[i], courant);
+            fileParcours.push(adjacents[i]);
+         }
+      }
+
+      fileParcours.pop();
+   }
+
+   // On crée le chemin en remontant de la destination à l'origine
+   if (origine == destination)
+   {
+      // si la ville de départ est la ville d'arrivée
+      std::cout << "Vous êtes déjà à destination.\n";
+   }
+   else if (unReseau.getPrecedent(destination).empty())
+   {
+      // s'il n'y a pas de chemin pour se rendre à la destinition
+      std::cout << "Destination inatteignable à partir de la ville de départ.\n";
+   }
+   else
+   {
+      // On empile d'abord la destination
+      pile.push(destination);
+
+      // puis on empile les villes précédentes
+      std::string precedent;
+      while (precedent != origine)
+      {
+         precedent = unReseau.getPrecedent(pile.top());
+         pile.push(precedent);
+      }
+
+      // On dépile toutes les villes dans le chemin
+      while (!pile.empty())
+      {
+         chemin.push_back(pile.top());
+         pile.pop();
+      }
+   }
+
+   return chemin;
 }
 
 /**
