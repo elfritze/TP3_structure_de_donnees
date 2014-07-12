@@ -800,6 +800,19 @@ std::string Graphe::getPrecedent(const std::string& nom)
    return precedent;
 }
 
+
+/**
+ * \fn void Graphe::initialiserPrecedents()
+ */
+void Graphe::initialiserPrecedents()
+{
+   if (nbSommets != 0)
+   {
+      for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
+         courant->precedent = 0;
+   }
+}
+
 /**
  * \fn method_prototype
  *

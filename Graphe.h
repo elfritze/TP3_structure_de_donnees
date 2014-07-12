@@ -312,6 +312,13 @@ public:
     */
    void setPrecedent(const std::string& sommetUn, const std::string& sommetDeux);
 
+   /**
+    * \brief Permet d'initialiser les pointeurs précédents de tous les sommets du graphe.
+    *
+    * \post Tous les pointeurs précédents des sommets du graphe sont NULL.
+    */
+   void initialiserPrecedents();
+
 
 private:
    class Sommet;	// Un sommet du graphe, on le déclare ici à cause de la classe Arc qui s'en sert

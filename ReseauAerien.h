@@ -16,6 +16,8 @@
 #include <climits>
 #include <fstream>
 #include <iostream>
+#include <queue>
+#include <stack>
 #include <stdexcept>
 #include <string>
 #include <vector>
