@@ -433,7 +433,7 @@ Chemin ReseauAerien::rechercheCheminDijkstra(const std::string& origine, const s
    villePrecedente = precedent[positionDestination];
 
    // On boucle pour ajouter à la pile toutes les villes précédentes jusqu'à la ville origine
-   float escale;
+   float escale = 0;
    while (villePrecedente != origine)
    {
       for (int i = 0; (unsigned)i < villes.size(); i++)
@@ -499,10 +499,117 @@ Chemin ReseauAerien::bellManFord(const std::string& origine, const std::string& 
                                  int dureeCoutNiveau)
 {
    //exception logic_error : si le départ ou l'arrivée ne fait pas partie du réseau aérien.
+	if(!unReseau.sommetExiste(origine) || !unReseau.sommetExiste(destination))
+		throw std::logic_error("La destination ou l'origine n'appartien pas au réseau aérien");
 
    //exception logic_error : si dureeCoutNiveau est différent des valeurs 1, 2 ou 3.
+	if(dureeCoutNiveau != 1 && dureeCoutNiveau != 2 && dureeCoutNiveau != 3)
+		throw std::logic_error("La valeur de dureeCoutNiveau doit se situer entre 1 et 3");
 
-   return Chemin();
+	
+
+	Chemin chemin;
+	std::vector<std::string> sommets = unReseau.listerNomsSommets();
+
+	//On initialise les distances les plus courtes à INT_MAX et on initialise les villes précédentes à zéro
+	unReseau.initialiserDistances();
+	unReseau.initialiserPrecedents();
+	
+	//On initialise le sommet d'origine à zéro
+	unReseau.marquerDistanceSommet(origine,0);
+
+	bool stable;
+	int nbSommets = 1;
+	do
+	{
+		stable = true;
+		//Pour tout sommet
+		for(int i = 0;i < sommets.size();i++){
+
+			//Origine
+			std::string origine = sommets.at(i);
+			//Liaisons
+			std::vector<std::string> adjacents = unReseau.listerSommetsAdjacents(origine);
+
+			//Pour toute lisaison (arc)
+			for(int j = 0; j < adjacents.size();j++){
+
+				//Destination
+				std::string destination = adjacents.at(j);
+				Ponderations pond =  unReseau.getPonderationsArc(origine,destination);
+				float distance = unReseau.getDistanceSommet(origine) + (dureeCoutNiveau == 1 ? pond.duree : dureeCoutNiveau == 2 ? pond.cout : pond.ns);
+
+				//RELACHEMENT
+				if(distance < unReseau.getDistanceSommet(destination))
+				{
+
+					unReseau.marquerDistanceSommet(destination,distance);
+					unReseau.setPrecedent(destination,origine);
+				}
+			}
+
+
+		}
+
+		//Pour tout sommet
+		for(int i = 0;i < sommets.size();i++){
+			//Origine
+			std::string origine = sommets.at(i);
+			//Liaisons
+			std::vector<std::string> adjacents = unReseau.listerSommetsAdjacents(origine);
+			//Pour toute lisaison (arc)
+			for(int j = 0; j < adjacents.size();j++){
+				//Destination
+				std::string destination = adjacents.at(j);
+				float distance = unReseau.getDistanceSommet(origine) + unReseau.getPonderationsArc(origine,destination).duree;
+
+				//Si le graphe est stable
+				if(distance < unReseau.getDistanceSommet(destination))
+					stable = false;
+			}
+
+
+		}
+		
+		nbSommets++;
+	}
+	while(!stable && nbSommets < sommets.size() + 1); //Tant que le graphe n'est pas stable ou que nbSommets max est atteint
+
+	 // On crée le chemin en remontant de la destination à l'origine
+	if (origine == destination)
+	{
+		// si la ville de départ est la ville d'arrivée on est déjà arrivé. genial
+		chemin.coutTotal = 0;
+		chemin.dureeTotale = 0;
+		chemin.nsTotal = 0;
+		chemin.listeVilles.push_back(origine);
+		chemin.reussi = true;
+	}
+	else if (unReseau.getPrecedent(destination).empty())
+	{
+		//Chemin inexistant 
+		chemin.reussi = false;
+	}
+	else
+	{
+		 std::stack<std::string> pile; 
+		//On ajoute toutes les villes précédentes à partir de la destination
+		std::string precedent = destination;
+		while (precedent != origine)
+		{
+			pile.push(precedent);
+			
+			precedent = unReseau.getPrecedent(precedent);
+		}
+		pile.push(precedent);
+
+		while(!pile.empty()){
+			chemin.listeVilles.push_back(pile.top());
+			pile.pop();
+		}
+		
+	}
+	return chemin;
 }
 
 /**

@@ -638,6 +638,38 @@ Coordonnees Graphe::getCoordonnesSommet(const std::string& nom) const
 }
 
 /**
+ * \fn bool Graphe::getEtatSommet(const std::string& nom) const
+ *
+ * \param[in] nom : Le nom du sommet.
+ *
+ * \return La distance la plus courte vers un sommet passé en argument.
+ */
+float Graphe::getDistanceSommet(const std::string& nom) const
+{
+   bool existe = false;
+   float distance;
+
+   //On parcourt la liste des sommets jusqu'à ce que l'on trouve le bon.
+   for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
+   {
+      if (courant->nom == nom)
+      {
+		 distance = courant->distance;
+         existe = true;
+         break;
+      }
+   }
+
+   //Exception si le sommet n'existe pas
+   if (!existe)
+      throw std::logic_error("getDistanceSommet: Le sommet n'existe pas.");
+
+
+   return distance;
+}
+
+
+/**
  * \fn float Graphe::getDistance(const std::string& sommetUn, const std::string& sommetDeux) const
  *
  * \param[in] sommetUn : Le nom du sommet #1.
@@ -812,6 +844,44 @@ void Graphe::initialiserPrecedents()
          courant->precedent = 0;
    }
 }
+
+/**
+ * \fn void Graphe::initialiserDistances()
+ */
+void Graphe::initialiserDistances()
+{
+   if (nbSommets != 0)
+   {
+      for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
+		  courant->distance = INT_MAX;
+   }
+}
+
+/**
+ * \fn void Graphe::marquerDistanceSommet(const std::string& nom)
+ *
+ * \param[in] nom : Le nom du sommet.
+ */
+void Graphe::marquerDistanceSommet(const std::string& nom,float distance)
+{
+   bool existe = false;
+
+   //On parcourt la liste des sommets jusqu'à ce que l'on trouve le bon.
+   for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
+   {
+      if (courant->nom == nom)
+      {
+         courant->distance = distance;
+         existe = true;
+         break;
+      }
+   }
+
+   //Exception si le sommet n'existe pas
+   if (!existe)
+      throw std::logic_error("marquerEtatSommet: Le sommet n'existe pas.");
+}
+
 
 /**
  * \fn method_prototype

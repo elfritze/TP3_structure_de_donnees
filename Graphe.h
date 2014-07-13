@@ -282,12 +282,42 @@ public:
     */
    void marquerEtatSommet(const std::string& nom);
 
+    /**
+    * \brief Change l'état d'un sommet passé en argument à vrai.
+    *
+    * \pre Le sommet doit faire partie du graphe.
+    *
+    * \post L'état du sommet est maintenant égal à vrai.
+    *
+    * \exception logic_error : si le sommet n'existe pas.
+    */
+   void marquerDistanceSommet(const std::string& nom,float distance);
+
+   /**
+    * \brief Retourne la distance la plus courte vers un sommet passé en argument.
+    *
+    * \pre Le sommet doit faire partie du graphe.
+    *
+    * \post Le graphe reste inchangé.
+    *
+    * \exception logic_error : si le sommet n'existe pas.
+    */
+   float getDistanceSommet(const std::string& nom) const;
+
    /**
     * \brief Permet d'initialiser à faux l'état de tous les sommets du graphe.
     *
     * \post Tous les états des sommets du graphe valent faux.
     */
    void initialiserEtats();
+
+   
+    /**
+    * \brief Permet d'initialiser à INT_MAX la plus courte distance de tous les sommets du graphe.
+    *
+    * \post Toutes les plus courtes distances du graphe valent INT_MAX.
+    */
+   void initialiserDistances();
 
    /**
     * \brief Retourne le nom du sommet précédent au sommet passé en argument.
@@ -346,6 +376,7 @@ private:
       Coordonnees coord;  /*!< Les coordonnées géospatiales de la ville. */
       Arc * listeDest;    /*!< La liste des arcs entre la ville et les villes qui lui sont adjacentes. */
       bool etat;			  /*!< Pour marquer une ville. */
+	  float distance;		/*!< La distance la plus courte vers le sommet */
       Sommet *precedent;  /*!< La ville précédente dans la liste des villes. */
       Sommet *suivant;	  /*!< La prochaine ville dans la liste. */
 
@@ -357,7 +388,7 @@ private:
       explicit Sommet(std::string nom, Coordonnees coord, Arc * listeDest = 0, bool etat = false,
                       Sommet *precedent = 0, Sommet *suivant = 0) :
                       nom(nom), coord(coord), listeDest(listeDest), etat(etat),
-                      precedent(precedent), suivant(suivant) {}
+                      precedent(precedent), suivant(suivant),distance(0) {}
    };
 
    int nbSommets;          /*!< Le nombre de sommets dans le graphe. */

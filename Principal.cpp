@@ -29,7 +29,8 @@ int main()
       fichier.close();
 
       cout << reseau;
-
+	  Chemin c1 = reseau.rechercheCheminDijkstra("Quebec","New_York",1);
+	  Chemin c2 = reseau.bellManFord("Quebec","New_York",1);
       // Sauvegarde du réseau dans un fichier texte
       ofstream out("Test.txt",ios::out);
       reseau.sauvegarderReseau(out);
