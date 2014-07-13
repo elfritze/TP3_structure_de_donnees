@@ -861,6 +861,7 @@ void Graphe::initialiserDistances()
  * \fn void Graphe::marquerDistanceSommet(const std::string& nom)
  *
  * \param[in] nom : Le nom du sommet.
+ * \param[in] distance : La distance la plus courte vers le sommet.
  */
 void Graphe::marquerDistanceSommet(const std::string& nom, float distance)
 {
@@ -884,7 +885,7 @@ void Graphe::marquerDistanceSommet(const std::string& nom, float distance)
 
 
 /**
- * \fn method_prototype
+ * \fn void Graphe::setPrecedent(const std::string& sommetUn, const std::string& sommetDeux)
  *
  * \param[in] sommetUn : Le nom du sommet avec le pointeur précédent à rediriger.
  * \param[in] sommetDeux : Le nom du sommet vers lequel pointe le pointeur précédent du sommetUn.

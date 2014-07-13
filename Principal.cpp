@@ -17,31 +17,37 @@
 using namespace std;
 using namespace TP3;
 
+/**
+ * \fn int main()
+ * \brief Fonction principale pour tester les méthodes du réseau aérien.
+ *
+ * \return 0 - Arrêt normal du programme.
+ */
 int main()
 {
    try
    {
       ReseauAerien reseau;
-	  string comm;
+      string comm;
       // Charger le réseau à partir du fichier texte
-      ifstream fichier("ReseauAerien.txt",ios::in);
+      ifstream fichier("ReseauAerien.txt", ios::in);
       reseau.chargerReseau(fichier);
       fichier.close();
 
       cout << reseau;
-	  Chemin c1 = reseau.rechercheCheminDijkstra("Quebec","New_York",1);
-	  Chemin c2 = reseau.bellManFord("Quebec","New_York",1);
+      Chemin c1 = reseau.rechercheCheminDijkstra("Quebec", "New_York", 1);
+      Chemin c2 = reseau.bellManFord("Quebec", "New_York", 1);
       // Sauvegarde du réseau dans un fichier texte
-      ofstream out("Test.txt",ios::out);
+      ofstream out("Test.txt", ios::out);
       reseau.sauvegarderReseau(out);
       out.close();
 
       // Fermeture transitive
       ReseauAerien fermeture = reseau.fermetureReseau();
 
-      //cout << fermeture;
-	  cout << fermeture;
-	  cin>>comm;
+      cout << fermeture;
+      cin >> comm;
+
       // Génération des graphes avec Graphviz
 
       // Graphe sans pondération
@@ -68,8 +74,8 @@ int main()
       // fichierGraphviz.close();
       // std::system("dot -Tpng -oGraphe_ns.png Graphe.def");
 
-
-   } catch (exception & e)
+   }
+   catch (exception & e)
    {
       cerr << e.what() << endl;
    }
