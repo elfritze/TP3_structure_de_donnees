@@ -853,7 +853,7 @@ void Graphe::initialiserDistances()
    if (nbSommets != 0)
    {
       for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
-		  courant->distance = INT_MAX;
+         courant->distance = INT_MAX;
    }
 }
 
@@ -862,7 +862,7 @@ void Graphe::initialiserDistances()
  *
  * \param[in] nom : Le nom du sommet.
  */
-void Graphe::marquerDistanceSommet(const std::string& nom,float distance)
+void Graphe::marquerDistanceSommet(const std::string& nom, float distance)
 {
    bool existe = false;
 
@@ -879,7 +879,7 @@ void Graphe::marquerDistanceSommet(const std::string& nom,float distance)
 
    //Exception si le sommet n'existe pas
    if (!existe)
-      throw std::logic_error("marquerEtatSommet: Le sommet n'existe pas.");
+      throw std::logic_error("marquerDistanceSommet: Le sommet n'existe pas.");
 }
 
 

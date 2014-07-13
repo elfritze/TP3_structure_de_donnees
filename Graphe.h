@@ -12,6 +12,7 @@
 #ifndef _GRAPHE__H
 #define _GRAPHE__H
 
+#include <climits>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -376,7 +377,7 @@ private:
       Coordonnees coord;  /*!< Les coordonnées géospatiales de la ville. */
       Arc * listeDest;    /*!< La liste des arcs entre la ville et les villes qui lui sont adjacentes. */
       bool etat;			  /*!< Pour marquer une ville. */
-	  float distance;		/*!< La distance la plus courte vers le sommet */
+	   float distance;	  /*!< La distance la plus courte vers le sommet */
       Sommet *precedent;  /*!< La ville précédente dans la liste des villes. */
       Sommet *suivant;	  /*!< La prochaine ville dans la liste. */
 
@@ -386,9 +387,9 @@ private:
        * \post Un noeud typique Sommet est initialisé.
        */
       explicit Sommet(std::string nom, Coordonnees coord, Arc * listeDest = 0, bool etat = false,
-                      Sommet *precedent = 0, Sommet *suivant = 0) :
-                      nom(nom), coord(coord), listeDest(listeDest), etat(etat),
-                      precedent(precedent), suivant(suivant),distance(0) {}
+                      float distance = 0, Sommet *precedent = 0, Sommet *suivant = 0) :
+                      nom(nom), coord(coord), listeDest(listeDest), etat(etat), distance(distance),
+                      precedent(precedent), suivant(suivant) {}
    };
 
    int nbSommets;          /*!< Le nombre de sommets dans le graphe. */
