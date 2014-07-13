@@ -886,8 +886,8 @@ void Graphe::_copier(Sommet * ls)
          {
             // On crée l'arc à ajouter
             Arc * ajout = new Arc;
-			temp = 0;
-			temp = listeSommets;
+            temp = 0;
+            temp = listeSommets;
             // On cherche le sommet de destination dans listeSommets
             while (temp != 0)
             {

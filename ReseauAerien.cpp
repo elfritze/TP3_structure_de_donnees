@@ -179,23 +179,23 @@ ReseauAerien ReseauAerien::fermetureReseau()
    for (int k = 0; (unsigned)k < sommets.size(); k++)
    {
 	   //Pour chaque paire de sommets i et j
-	  std::string ville1 = sommets.at(k);
+      std::string ville1 = sommets.at(k);
       for (int i = 0; (unsigned)i < sommets.size(); i++)
       {
-		  std::string ville2 = sommets.at(i);
+		   std::string ville2 = sommets.at(i);
          for (int j = 0; (unsigned)j < sommets.size(); j++)
          {
-			 std::string ville3 = sommets.at(j);
+            std::string ville3 = sommets.at(j);
 
-			 //S'il n'existe pas de chemin entre i et j
-			 if(!r.unReseau.arcExiste(ville2,ville3)){
-				 //S'il existe un chemin entre i et k et entre k et j alors on fait un chemin entre i et j
-				 if(r.unReseau.arcExiste(ville2,ville1) && r.unReseau.arcExiste(ville1,ville3))
-				 {
-					 r.unReseau.ajouterArc(ville2,ville3,0,0,0);
-				 }
-			 }
-            
+            //S'il n'existe pas de chemin entre i et j
+            if(!r.unReseau.arcExiste(ville2,ville3))
+            {
+               //S'il existe un chemin entre i et k et entre k et j alors on fait un chemin entre i et j
+               if(r.unReseau.arcExiste(ville2,ville1) && r.unReseau.arcExiste(ville1,ville3))
+               {
+                  r.unReseau.ajouterArc(ville2,ville3,0,0,0);
+               }
+            }
          }
       }
    }
@@ -217,8 +217,8 @@ std::vector<std::string> ReseauAerien::rechercheCheminLargeur(const std::string&
 {
    //Exception si le départ ou l'arrivée ne fait pas partie du réseau aérien.
    if (!unReseau.sommetExiste(origine) || !unReseau.sommetExiste(destination))
-      throw std::logic_error
-         ("rechercheCheminLargeur: Le départ ou l'arrivée ne fait pas partie du réseau aérien.");
+      throw std::logic_error(
+            "rechercheCheminLargeur: Le départ ou l'arrivée ne fait pas partie du réseau aérien.");
 
    // Conteneurs pour l'algorithme
    std::vector<std::string> chemin;
@@ -290,6 +290,11 @@ std::vector<std::string> ReseauAerien::rechercheCheminLargeur(const std::string&
       }
    }
 
+   // On réinitialise les états et les pointeurs avant de quitter.
+   unReseau.initialiserEtats();
+   unReseau.initialiserPrecedents();
+
+
    return chemin;
 }
 
@@ -307,9 +312,175 @@ std::vector<std::string> ReseauAerien::rechercheCheminLargeur(const std::string&
 Chemin ReseauAerien::rechercheCheminDijkstra(const std::string& origine, const std::string&
                                              destination, bool dureeCout)
 {
-   //exception logic_error : si le départ ou l'arrivée ne fait pas partie du réseau aérien.
+   // Exception si le départ ou l'arrivée ne fait pas partie du réseau aérien.
+   if (!unReseau.sommetExiste(origine) || !unReseau.sommetExiste(destination))
+      throw std::logic_error(
+            "rechercheCheminDijkstra: Le départ ou l'arrivée ne fait pas partie du réseau aérien.");
 
-   return Chemin();
+   // Initialisation du chemin
+   Chemin chemin;
+
+   // On vérifie avec la fermeture transitive s'il est possible d'atteindre la destination
+   ReseauAerien fermeture = fermetureReseau();
+   if (!fermeture.unReseau.arcExiste(origine, destination))
+   {
+      // Sinon, on retourne un chemin vide et le booléen reussi = false
+      std::cout << "Destination inatteignable à partir de la ville de départ.\n";
+      chemin.reussi = false;
+      chemin.dureeTotale = 0;
+      chemin.coutTotal = 0;
+      return chemin;
+   }
+
+   // On initialise l'état des sommets du graphe
+   unReseau.initialiserEtats();
+
+   // Conteneurs pour l'algorithme...
+   std::vector<std::string> villes = unReseau.listerNomsSommets();  //la liste des villes
+   std::vector<std::string> adjacents; //pour contenir les villes adjacentes à la ville courante
+   std::queue<std::string> file; //file pour parcourir les différents trajets
+   std::vector<float> ponderation(villes.size(), infinie); //pour contenir les pondérations
+   std::vector<std::string> precedent(villes.size()); //pour contenir les villes précédentes
+
+   // Dans la liste des villes, on trouve les positions de la ville origine et la destination
+   // et on met à 0 la pondération de la ville origine
+   int positionDestination;
+   for (int i = 0; (unsigned)i < villes.size(); i++)
+   {
+      if (villes[i] == origine)
+         ponderation[i] = 0;
+
+      if (villes[i] == destination)
+         positionDestination = i;
+   }
+
+
+   // On crée une file à partir de l'origine et on parcourt tous les trajets possibles.
+
+   int positionA;
+   int positionB;
+   std::string courant;
+
+   file.push(origine);  // On commence par enfiler l'origine
+
+   // et on boucle tant que la file n'est pas vide
+   while (!file.empty())
+   {
+      courant = file.front();
+      adjacents = unReseau.listerSommetsAdjacents(courant);
+
+      // on retire la ville courante de la file
+      file.pop();
+
+      // On parcourt les villes adjacentes de la ville courante
+      for (int i = 0; (unsigned)i < adjacents.size(); i++)
+      {
+         // Si la ville adjacente n'a pas déjà été visitée
+         if (!unReseau.getEtatSommet(adjacents[i]))
+         {
+            // on ajoute la ville adjacente à la file
+            file.push(adjacents[i]);
+            unReseau.marquerEtatSommet(adjacents[i]); // On change son état à true
+
+            // on trouve les positions de la ville courante et de la ville adjacente
+            for (int j = 0; (unsigned)j < villes.size(); j++)
+            {
+               if (villes[j] == courant)
+                  positionA = j;
+
+               if (villes[j] == adjacents[i])
+                  positionB = j;
+            }
+
+            // On obtient les pondérations du trajet entre les deux villes
+            Ponderations ponder = unReseau.getPonderationsArc(courant, adjacents[i]);
+
+            // On compare la pondération à celle du tableau (par défaut, la valeur est infinie)
+            // Si celle du tableau est plus grande, on remplace par la nouvelle
+            // et on change la ville précédente pour la ville courante
+
+            if (dureeCout == true)
+            {
+               if (ponderation[positionB] > (ponderation[positionA] + ponder.duree))
+               {
+                  ponderation[positionB] = ponderation[positionA] + ponder.duree;
+                  precedent[positionB] = courant;
+               }
+            }
+            else
+            {
+               if (ponderation[positionB] > (ponderation[positionA] + ponder.cout))
+               {
+                  ponderation[positionB] = ponderation[positionA] + ponder.cout;
+                  precedent[positionB] = courant;
+               }
+            }
+         }
+      }
+   }
+
+
+   // Une fois toutes les villes visitées, on constuit le chemin
+
+   int positionPrecedent;
+   std::string villePrecedente;
+   std::stack<std::string> pile; // Pile pour remonter le chemin de l'arrivée au départ
+
+   // On ajoute la destination à la pile
+   pile.push(destination);
+
+   // On récupère la ville précédente
+   villePrecedente = precedent[positionDestination];
+
+   // On boucle pour ajouter à la pile toutes les villes précédentes jusqu'à la ville origine
+   float escale;
+   while (villePrecedente != origine)
+   {
+      for (int i = 0; (unsigned)i < villes.size(); i++)
+      {
+         if (villes[i] == villePrecedente)
+         {
+            positionPrecedent = i;
+            break;
+         }
+      }
+
+      pile.push(villePrecedente);
+      villePrecedente = precedent[positionPrecedent];
+
+      // On compte le nombre d'escales. Chaque escale équivaut à 1 heure d'attente.
+      escale++;
+   }
+
+   // On ajoute l'origine à la pile
+   pile.push(origine);
+
+   // Et finalement, on dépile le chemin dans la liste des villes.
+   // Le départ est en position 0 et l'arrivée à la fin de la liste.
+   while (!pile.empty())
+   {
+      chemin.listeVilles.push_back(pile.top());
+      pile.pop();
+   }
+
+   // On met à jour les infos du chemin selon l'option choisie en argument
+   if (dureeCout == true)
+   {
+      chemin.dureeTotale = ponderation[positionDestination] + escale;
+      chemin.reussi = true;
+   }
+   else
+   {
+      chemin.coutTotal = ponderation[positionDestination];
+      chemin.reussi = true;
+   }
+
+
+   // On réinitialise les états avant de quitter.
+   unReseau.initialiserEtats();
+
+
+   return chemin;
 }
 
 /**
@@ -365,7 +536,7 @@ Chemin ReseauAerien::algorithmeAstar(const std::string& origine, const std::stri
 void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
 {
    if (!out.good())
-      throw std::logic_error("displayInGraphViz: fichier incorrect");
+         throw std::logic_error("displayInGraphViz: fichier incorrect");
 
    if (dureeCoutNiveau < 0 || dureeCoutNiveau > 3)
       throw std::logic_error("displayInGraphviz: la valeur de l'entier doit être 0, 1, 2 ou 3");
@@ -377,7 +548,7 @@ void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
    {
       std::vector<std::string> arcs = unReseau.listerSommetsAdjacents(sommets.at(i));
 
-      out << "\"" << sommets.at(i) << "\"" << std::endl;
+      out << sommets.at(i) << std::endl;
 
       for (int j = 0; (unsigned)j < arcs.size(); j++)
       {
@@ -385,22 +556,22 @@ void ReseauAerien::displayInGraphviz(std::ostream & out, int dureeCoutNiveau)
 
          // sans pondération
          if (dureeCoutNiveau == 0)
-            out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j) << "\"" << std::endl;
+            out << "\t " << sommets.at(i) << " -> " << arcs.at(j) << std::endl;
 
          // Pondération pour la durée
          if (dureeCoutNiveau == 1)
-            out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j)
-                << "\" [label=" << ponder.duree << "];" << std::endl;
+            out << "\t " << sommets.at(i) << " -> " << arcs.at(j)
+                << " [label=" << ponder.duree << "];" << std::endl;
 
          // Pondération pour le coût
          if (dureeCoutNiveau == 2)
-            out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j)
-                << "\" [label=" << ponder.cout << "];" << std::endl;
+            out << "\t " << sommets.at(i) << " -> " << arcs.at(j)
+                << " [label=" << ponder.cout << "];" << std::endl;
 
          // Pondération pour le niveau de sécurité
          if (dureeCoutNiveau == 3)
-            out << "\t \"" << sommets.at(i) << "\" -> \"" << arcs.at(j)
-                << "\" [label=" << ponder.ns << "];" << std::endl;
+            out << "\t " << sommets.at(i) << " -> " << arcs.at(j)
+                << " [label=" << ponder.ns << "];" << std::endl;
       }
    }
 
