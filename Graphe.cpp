@@ -853,7 +853,7 @@ void Graphe::initialiserDistances()
    if (nbSommets != 0)
    {
       for (Sommet * courant = listeSommets; courant != 0; courant = courant->suivant)
-		  courant->distance = INT_MAX;
+         courant->distance = INT_MAX;
    }
 }
 
@@ -861,8 +861,9 @@ void Graphe::initialiserDistances()
  * \fn void Graphe::marquerDistanceSommet(const std::string& nom)
  *
  * \param[in] nom : Le nom du sommet.
+ * \param[in] distance : La distance la plus courte vers le sommet.
  */
-void Graphe::marquerDistanceSommet(const std::string& nom,float distance)
+void Graphe::marquerDistanceSommet(const std::string& nom, float distance)
 {
    bool existe = false;
 
@@ -879,12 +880,12 @@ void Graphe::marquerDistanceSommet(const std::string& nom,float distance)
 
    //Exception si le sommet n'existe pas
    if (!existe)
-      throw std::logic_error("marquerEtatSommet: Le sommet n'existe pas.");
+      throw std::logic_error("marquerDistanceSommet: Le sommet n'existe pas.");
 }
 
 
 /**
- * \fn method_prototype
+ * \fn void Graphe::setPrecedent(const std::string& sommetUn, const std::string& sommetDeux)
  *
  * \param[in] sommetUn : Le nom du sommet avec le pointeur précédent à rediriger.
  * \param[in] sommetDeux : Le nom du sommet vers lequel pointe le pointeur précédent du sommetUn.

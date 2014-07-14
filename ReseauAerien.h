@@ -21,7 +21,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-
+#include <list>
 /**
  * \namespace TP3
  *

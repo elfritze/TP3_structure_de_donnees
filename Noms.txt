@@ -1,0 +1,13 @@
+﻿
+Éric Guillemette - 111 087 237 - eric.guillemette.3@ulaval.ca
+Mathieu L'Écuyer - 111 078 093 - mathieu.lecuyer.1@ulaval.ca
+
+
+IFT-2008 - Travail pratique 3
+
+Ce travail a été fait sous Windows.
+
+
+
+Comparaison des algorithmes: 
+
