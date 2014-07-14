@@ -11,3 +11,4 @@ Ce travail a été fait sous Windows.
 
 Comparaison des algorithmes: 
 
+Après plusieurs tests de temps d'éxécution, nous avons remarqué que l'algorithme A* remporte à chaque fois sur les deux autres. Le plus lent est Dijkstra avec un temps d'éxécution qui tourne toujours autour des 100 millisecondes. Avec peu de villes à parcourir, Bellman Ford (version améliorée) et A* donnent des résultats similaires. Par contre, si on prend une ville plus loin (en terme d'arcs) du point d'origine, A* reste toujours avec un temps d'éxécution de 1 à 2 millisecondes tandis que BellmanFord monte graduellement.
