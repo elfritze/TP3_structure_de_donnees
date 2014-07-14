@@ -10,7 +10,7 @@
  */
 
 #include "ReseauAerien.h"
-
+#include <list>
 /**
  * \namespace TP3
  *
@@ -576,12 +576,12 @@ Chemin ReseauAerien::bellManFord(const std::string& origine, const std::string& 
 	while(!stable && nbSommets < sommets.size() + 1); //Tant que le graphe n'est pas stable ou que nbSommets max est atteint
 
 	 // On crée le chemin en remontant de la destination à l'origine
+	chemin.coutTotal = 0;
+	chemin.dureeTotale = 0;
+	chemin.nsTotal = 0;
 	if (origine == destination)
 	{
 		// si la ville de départ est la ville d'arrivée on est déjà arrivé. genial
-		chemin.coutTotal = 0;
-		chemin.dureeTotale = 0;
-		chemin.nsTotal = 0;
 		chemin.listeVilles.push_back(origine);
 		chemin.reussi = true;
 	}
@@ -593,20 +593,35 @@ Chemin ReseauAerien::bellManFord(const std::string& origine, const std::string& 
 	else
 	{
 		 std::stack<std::string> pile; 
+		 
 		//On ajoute toutes les villes précédentes à partir de la destination
 		std::string precedent = destination;
 		while (precedent != origine)
 		{
+			Ponderations pond = unReseau.getPonderationsArc(unReseau.getPrecedent(precedent),precedent);
+
+			//On incrémente les pondérations
+			if(dureeCoutNiveau == 1)
+				chemin.dureeTotale += pond.duree;
+			else if(dureeCoutNiveau == 2)
+				chemin.coutTotal += pond.cout;
+			else
+				chemin.nsTotal += pond.ns;
 			pile.push(precedent);
 			
 			precedent = unReseau.getPrecedent(precedent);
 		}
 		pile.push(precedent);
 
+		//On rempli notre chemin
 		while(!pile.empty()){
 			chemin.listeVilles.push_back(pile.top());
 			pile.pop();
 		}
+
+		//On prend en compte les escales
+		if(dureeCoutNiveau == 1)
+			chemin.dureeTotale += chemin.listeVilles.size() - 2;
 		
 	}
 	return chemin;
@@ -627,8 +642,135 @@ Chemin ReseauAerien::algorithmeAstar(const std::string& origine, const std::stri
                                      bool dureeCout)
 {
    //exception logic_error : si le départ ou l'arrivée ne fait pas partie du réseau aérien.
+	if(!unReseau.sommetExiste(origine) || !unReseau.sommetExiste(destination))
+		throw std::logic_error("La destination ou l'origine n'appartien pas au réseau aérien");
 
-   return Chemin();
+	Chemin chemin;
+	bool found = false;
+	std::list<std::string> aExplorer;
+	aExplorer.push_back(origine);
+
+	unReseau.initialiserEtats();
+	unReseau.initialiserPrecedents();
+	unReseau.initialiserDistances();
+	unReseau.marquerDistanceSommet(origine,0);
+
+	//Tant que la liste de villes a explorer n'est pas vide et que la destination n'en fait pas partie
+	while(!aExplorer.empty() && !found)
+	{
+		//Element au cout minimal
+		std::string elem;
+		//Coût minimal
+		float min = INT_MAX;
+		//Récupérer le sommet  de coût total minimum
+		for (std::list<std::string>::const_iterator iterator = aExplorer.begin(), end = aExplorer.end(); iterator != end; ++iterator)
+		{
+			float distance = unReseau.getDistanceSommet(*iterator);
+			if(distance < min)
+			{
+				elem = *iterator;
+				min = distance;
+			}
+		}
+		
+		//On retire l'élément trouvé de la liste
+		aExplorer.remove(elem);
+		//Ajouter l'élément de coût minimal à la liste de destinations à explorer
+		unReseau.marquerEtatSommet(elem);
+		
+		//On vérifie tous les arcs
+		std::vector<std::string> adjacents = unReseau.listerSommetsAdjacents(elem);
+		while(!adjacents.empty())
+		{
+			//On s'assure qu'ils n'ont pas été visités
+			if(!unReseau.getEtatSommet(adjacents.back()))
+			{
+				
+				//L'arc actuel
+				Ponderations pond = unReseau.getPonderationsArc(elem,adjacents.back());
+				//Distance optimiste par rapport à la destination
+				float nouvelleDistance = min + (dureeCout ? pond.duree : pond.cout) + unReseau.getDistance(adjacents.back(),destination);
+				//On vérifie si le sommet à ajouter est déjà présent
+				std::list<std::string>::iterator dejaPresent = std::find(aExplorer.begin(), aExplorer.end(),destination);
+				if(dejaPresent != aExplorer.end() )
+				{
+					//On s'assure que la nouvelle distance est optimale
+					if(nouvelleDistance < unReseau.getDistanceSommet(adjacents.back()))
+					{
+						//On marque la nouvelle distance et le précédent
+						unReseau.marquerDistanceSommet(adjacents.back(),nouvelleDistance);
+						unReseau.setPrecedent(adjacents.back(),elem);
+					}
+
+				}
+				else
+				{
+					//On ajoute à la liste et on marque le précédent et la nouvelle distance
+					unReseau.marquerDistanceSommet(adjacents.back(),nouvelleDistance);
+					unReseau.setPrecedent(adjacents.back(),elem);
+					aExplorer.push_back(adjacents.back());
+
+				}
+				
+			}
+			//Plus besoin du sommet
+			adjacents.pop_back();
+		}
+
+		//Recherche de la destination dans la liste
+		std::list<std::string>::iterator city = std::find(aExplorer.begin(), aExplorer.end(),destination);
+		//On vérifie si la destination est atteinte
+		city != aExplorer.end() ? found = true : found = false;
+	}
+
+	 // On crée le chemin en remontant de la destination à l'origine
+	chemin.coutTotal = 0;
+	chemin.dureeTotale = 0;
+	chemin.nsTotal = 0;
+	if (origine == destination)
+	{
+		// si la ville de départ est la ville d'arrivée on est déjà arrivé. genial
+		chemin.listeVilles.push_back(origine);
+		chemin.reussi = true;
+	}
+	else if (unReseau.getPrecedent(destination).empty())
+	{
+		//Chemin inexistant 
+		chemin.reussi = false;
+	}
+	else
+	{
+		 std::stack<std::string> pile; 
+		 
+		//On ajoute toutes les villes précédentes à partir de la destination
+		std::string precedent = destination;
+		while (precedent != origine)
+		{
+			Ponderations pond = unReseau.getPonderationsArc(unReseau.getPrecedent(precedent),precedent);
+
+			//On incrémente les pondérations
+			if(dureeCout)
+				chemin.dureeTotale += pond.duree;
+			else
+				chemin.coutTotal += pond.cout;
+
+			pile.push(precedent);
+			precedent = unReseau.getPrecedent(precedent);
+		}
+		pile.push(precedent);
+
+		//On rempli notre chemin
+		while(!pile.empty()){
+			chemin.listeVilles.push_back(pile.top());
+			pile.pop();
+		}
+
+		//On prend en compte les escales
+		if(dureeCout)
+			chemin.dureeTotale += chemin.listeVilles.size() - 2;
+		
+	}
+   return chemin;
 }
 
 /**

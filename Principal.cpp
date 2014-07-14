@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <time.h> 
 
 using namespace std;
 using namespace TP3;
@@ -29,8 +30,27 @@ int main()
       fichier.close();
 
       cout << reseau;
-	  Chemin c1 = reseau.rechercheCheminDijkstra("Quebec","New_York",1);
-	  Chemin c2 = reseau.bellManFord("Quebec","New_York",1);
+		clock_t t1;
+		clock_t t2;
+		clock_t t3;
+	  int f;
+
+	
+	 
+
+	  //Tests temps d'éxécution
+	  t1 = clock();
+	  reseau.rechercheCheminDijkstra("Paris","New_York",true);
+	   t1 = clock() - t1;
+	   
+	   t2= clock();
+	  reseau.bellManFord("Paris","New_York",1);
+	   t2 = clock() - t2;
+
+	   t3= clock();
+	  reseau.algorithmeAstar("Paris","New_York",true);
+	   t3 = clock() - t3;
+
       // Sauvegarde du réseau dans un fichier texte
       ofstream out("Test.txt",ios::out);
       reseau.sauvegarderReseau(out);
@@ -38,36 +58,26 @@ int main()
 
       // Fermeture transitive
       ReseauAerien fermeture = reseau.fermetureReseau();
-
       //cout << fermeture;
 	  cout << fermeture;
-	  cin>>comm;
-      // Génération des graphes avec Graphviz
 
-      // Graphe sans pondération
-      // ofstream fichierGraphviz("Graphe.def");
-      // reseau.displayInGraphviz(fichierGraphviz, 0);
-      // fichierGraphviz.close();
-      // std::system("dot -Tpng -oGraphe.png Graphe.def");
+	  //Tests algorithmes chemin
+	  std::vector<std::string> c1 = reseau.rechercheCheminLargeur("Quebec","Bogota");
 
-      // Graphe pour la durée
-      // ofstream fichierGraphviz("Graphe.def");
-      // reseau.displayInGraphviz(fichierGraphviz, 1);
-      // fichierGraphviz.close();
-      // std::system("dot -Tpng -oGraphe_duree.png Graphe.def");
+	  //Duree
+	  Chemin c2 = reseau.rechercheCheminDijkstra("Quebec","Bogota",true);
+	  Chemin c3 = reseau.bellManFord("Quebec","Bogota",1);
+	  Chemin c4 = reseau.algorithmeAstar("Quebec","Bogota",true);
 
-      // Graphe pour le coût
-      // fichierGraphviz.open("Graphe.def");
-      // reseau.displayInGraphviz(fichierGraphviz, 2);
-      // fichierGraphviz.close();
-      // std::system("dot -Tpng -oGraphe_cout.png Graphe.def");
+	  //Cout
+	  Chemin c5 = reseau.rechercheCheminDijkstra("Quebec","Bogota",false);
+	  Chemin c6 = reseau.bellManFord("Quebec","Bogota",2);
+	  Chemin c7 = reseau.algorithmeAstar("Quebec","Bogota",false);
 
-      // Graphe pour le niveau de sécurité
-      // fichierGraphviz.open("Graphe.def");
-      // reseau.displayInGraphviz(fichierGraphviz, 3);
-      // fichierGraphviz.close();
-      // std::system("dot -Tpng -oGraphe_ns.png Graphe.def");
+	  //Niveau de sécurité
+	  Chemin c8 = reseau.bellManFord("Quebec","Bogota",3);
 
+	  reseau.viderReseau();
 
    } catch (exception & e)
    {
